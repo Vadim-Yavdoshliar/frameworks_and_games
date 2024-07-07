@@ -32,3 +32,5 @@
 *.app
 
 Browse.VC.opendb
+
+.vs
