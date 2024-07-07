@@ -1,5 +1,9 @@
 
+#include "windowSystem.h"
 
-int WinMain() {
+int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams, int wndStatus) {
+	
+	
 
+	return 0;
 }

@@ -1,0 +1,3 @@
+﻿  main.cpp
+MSVCRTD.lib(exe_winmain.obj) : error LNK2019: unresolved external symbol WinMain referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
+D:\CodeProjects\WinAPI\frameworks_and_games\gameEngineBase_2D_3D_framework\x64\Debug\gameEngineBase_2D_3D_framework.exe : fatal error LNK1120: 1 unresolved externals
