@@ -7,6 +7,10 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 	a.init();
 	a.show();
 
+	/*base_window b("window_2", 500, 500, -1, -1);
+	b.init();
+	b.show();*/
+
 	base_window::processWindows();
 
 
