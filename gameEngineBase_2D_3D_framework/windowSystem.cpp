@@ -14,8 +14,7 @@ base_window::windowState base_window::defBaseWindowProc
 	
 	switch (msg) {
 	case WM_DESTROY:
-		return base_window::destroyed;
-
+		return windowState::destroyed;
 	}
 
 	return windowState::processed;
@@ -25,16 +24,20 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 {
 
 	for (auto& win : listOfWindows) {
-		if (win->mainWindow == hWnd) {
-			if (win->customWinProc(Msg, wParam, lParam) ==
-				destroyed) {
-				auto temp = win;
-				listOfWindows.remove(win);
-				delete temp;
+		if (win != nullptr) {
+			if (win->mainWindow == hWnd) {
+				if (win->windowNextState != windowState::destroyed)
+					win->windowNextState = win->customWinProc(Msg, wParam, lParam);
+				else {
+					delete win;
+					win = nullptr;
+				}
+				break;
 			}
-			break;
 		}
 	}
+
+	if (getCountOfWindows() == 0) PostQuitMessage(7);
 
 	return DefWindowProcA(hWnd, Msg, wParam, lParam);
 }
@@ -55,15 +58,7 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 
 std::list<base_window*> base_window::listOfWindows;
 
-void base_window::processEvents(MSG& msg_inst)
-{
-	
-	if (this->mainWindow != nullptr) {
-		GetMessageA(&msg_inst, this->mainWindow, 0, 0);
-		TranslateMessage(&msg_inst);
-		DispatchMessageA(&msg_inst);
-	}
-}
+
 
 
 
@@ -71,8 +66,14 @@ void base_window::processWindows()
 {
 	MSG message_inst;
 	while (1) {
-		for (auto& win : listOfWindows) {
-			win->processEvents(message_inst);
+
+		GetMessageA(&message_inst, nullptr, 0, 0);
+		TranslateMessage(&message_inst);
+		DispatchMessageA(&message_inst);
+		
+
+		if (getCountOfWindows() == 0) {
+			break;
 		}
 		
 	}
@@ -105,8 +106,7 @@ base_window::base_window
 
 base_window::~base_window()
 {
-	DestroyWindow(mainWindow);
-	listOfWindows.remove(this);
+	
 }
 
 void base_window::clearWindowList()
@@ -136,7 +136,11 @@ const char* base_window::getName()
 
 int base_window::getCountOfWindows()
 {
-	return listOfWindows.size();
+	int countOfWindows = 0;
+	for (auto& win : listOfWindows) {
+		if (win != nullptr) ++countOfWindows;
+	}
+	return countOfWindows;
 }
 
 void base_window::init()
@@ -144,6 +148,9 @@ void base_window::init()
 	// [ FUNCTION SPECIFIC ]
 	// Is virtual. Gives the opportunity to extend functional in derivative classes
 
+	if (mainWindow != nullptr) {
+		DestroyWindow(mainWindow);
+	}
 
 	// [ SCREEN DATA CATCHING ] 
 	int screenSizeX = GetSystemMetrics(SM_CXSCREEN);
@@ -185,7 +192,7 @@ void base_window::init()
 		0,
 		WNDCLASSconfig::getWNDCLASSname(),
 		windowName,
-		WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED,
+		WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME,
 		X,
 		Y,
 		width,
@@ -195,7 +202,7 @@ void base_window::init()
 		WNDCLASSconfig::getMainHandler(),
 		nullptr
 	);
-
+	
 }
 
 void base_window::show()
@@ -244,7 +251,7 @@ WNDCLASSconfig::WNDCLASSconfig() {
 	currHANDLER = GetModuleHandleA(nullptr);
 
 	windowClassInst.cbSize = sizeof(windowClassInst);
-	windowClassInst.style = CS_OWNDC | CS_DBLCLKS;
+	windowClassInst.style = CS_OWNDC;
 	windowClassInst.lpfnWndProc = base_window::baseWindowProc;
 	windowClassInst.hInstance = currHANDLER;
 	windowClassInst.cbClsExtra = 0;

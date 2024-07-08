@@ -6,7 +6,7 @@
 #include <Windows.h>
 #include <list>
 
-
+#define CREATE_b_WINDOW(title,height,width,x,y) base_window::createBaseWindow(title,height,width,x,y);
 
 class base_window {
 
@@ -14,6 +14,8 @@ class base_window {
 	processed,
 	destroyed
 	};
+
+	windowState windowNextState = windowState::processed;
 
 	static windowState defBaseWindowProc
 	(UINT&, WPARAM, LPARAM);
@@ -27,8 +29,6 @@ class base_window {
 
 	int X, Y;
 	int width, height;
-
-	virtual void processEvents(MSG&);
 
 protected:
 
@@ -62,10 +62,10 @@ public:
 	static void clearWindowList();
 	static base_window* createBaseWindow(
 		const char*,
-		int sizeX,
-		int sizeY,
-		int posX, 
-		int	posY,
+		int sizeX = 0,
+		int sizeY = 0,
+		int posX = -1, 
+		int	posY = -1,
 		windowState(*WinProc)
 		(UINT&, WPARAM, LPARAM) = nullptr);
 
@@ -78,10 +78,6 @@ public:
 
 };
 
-class testDerivedWindow : public base_window {
-public:
-	
-};
 
 // class with only one instance of itself
 class WNDCLASSconfig {
