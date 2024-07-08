@@ -6,18 +6,22 @@
 #include <Windows.h>
 #include <list>
 
-LRESULT  CustomProcForFramework(
-	HWND   hWnd,
-	UINT   Msg,
-	WPARAM wParam,
-	LPARAM lParam
-);
+
 
 class base_window {
 
-	static int windowCounter;
+	enum windowState {
+	processed,
+	destroyed
+	};
+
+	static windowState defBaseWindowProc
+	(UINT&, WPARAM, LPARAM);
+
+	windowState(*customWinProc) (UINT&, WPARAM, LPARAM);
+
 	const char* windowName;
-	HWND systemWindow = nullptr;
+	HWND mainWindow = nullptr;
 
 	static std::list<base_window*> listOfWindows;
 
@@ -26,13 +30,44 @@ class base_window {
 
 	virtual void processEvents(MSG&);
 
+protected:
+
+	base_window(
+		const char*, 
+		int sizeX, 
+		int sizeY, 
+		int posX, 
+		int posY,
+		windowState(*WinProc)
+		(UINT&, WPARAM, LPARAM));
+
+	
+
 public:
+
+	static LRESULT WINAPI baseWindowProc(
+		HWND hWnd,
+		UINT Msg,
+		WPARAM wParam,
+		LPARAM lParam
+	);
 
 	static void processWindows();
-	base_window(const char*, int sizeX, int sizeY, int posX, int posY);
+	
 	virtual ~base_window();
 
+
 public:
+
+	static void clearWindowList();
+	static base_window* createBaseWindow(
+		const char*,
+		int sizeX,
+		int sizeY,
+		int posX, 
+		int	posY,
+		windowState(*WinProc)
+		(UINT&, WPARAM, LPARAM) = nullptr);
 
 	const char* getName();
 	static int getCountOfWindows();
@@ -41,9 +76,12 @@ public:
 	virtual void show();
 	virtual void hide();
 
-
 };
 
+class testDerivedWindow : public base_window {
+public:
+	
+};
 
 // class with only one instance of itself
 class WNDCLASSconfig {
