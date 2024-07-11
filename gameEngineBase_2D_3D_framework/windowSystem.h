@@ -5,22 +5,27 @@
 
 #include <Windows.h>
 #include <list>
+#include <ctime>
 
-#define CREATE_b_WINDOW(title,height,width,x,y) base_window::createBaseWindow(title,height,width,x,y);
 
 class base_window {
 
-	enum windowState {
-	processed,
-	destroyed
+public:
+
+	enum action {
+		show_,
+		hide_,
+		destroy,
 	};
 
-	windowState windowNextState = windowState::processed;
+private:
 
-	static windowState defBaseWindowProc
-	(UINT&, WPARAM, LPARAM);
+	static int countOfFilledWindows;
 
-	windowState(*customWinProc) (UINT&, WPARAM, LPARAM);
+	static void defBaseWindowProc
+	(base_window&,UINT&, WPARAM, LPARAM);
+
+	void(*customWinProc) (base_window&,UINT&, WPARAM, LPARAM);
 
 	const char* windowName;
 	HWND mainWindow = nullptr;
@@ -30,16 +35,16 @@ class base_window {
 	int X, Y;
 	int width, height;
 
-protected:
+public:
 
 	base_window(
 		const char*, 
-		int sizeX, 
-		int sizeY, 
-		int posX, 
-		int posY,
-		windowState(*WinProc)
-		(UINT&, WPARAM, LPARAM));
+		int sizeX = 0,
+		int sizeY = 0, 
+		int posX = -1, 
+		int posY = -1,
+		void(*WinProc)
+		(base_window&, UINT&, WPARAM, LPARAM) = nullptr);
 
 	
 
@@ -60,14 +65,6 @@ public:
 public:
 
 	static void clearWindowList();
-	static base_window* createBaseWindow(
-		const char*,
-		int sizeX = 0,
-		int sizeY = 0,
-		int posX = -1, 
-		int	posY = -1,
-		windowState(*WinProc)
-		(UINT&, WPARAM, LPARAM) = nullptr);
 
 	const char* getName();
 	static int getCountOfWindows();

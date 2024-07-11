@@ -8,35 +8,34 @@
 // 
 // <START> of the field for custom window PROCEDURES
 
-base_window::windowState base_window::defBaseWindowProc
-(UINT& msg, WPARAM wParam, LPARAM lParam)
+void base_window::defBaseWindowProc
+(base_window& ms,UINT& msg, WPARAM wParam, LPARAM lParam)
 {
 	
-	switch (msg) {
+	/*switch (msg) {
 	case WM_DESTROY:
 		return windowState::destroyed;
-	}
+	}*/
 
-	return windowState::processed;
 }
 
 LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
+	if (Msg != WM_DESTROY) {
 
-	for (auto& win : listOfWindows) {
-		if (win != nullptr) {
+		for (auto& win : listOfWindows) {
+
 			if (win->mainWindow == hWnd) {
-				if (win->windowNextState != windowState::destroyed)
-					win->windowNextState = win->customWinProc(Msg, wParam, lParam);
-				else {
-					delete win;
-					win = nullptr;
-				}
+
+				win->customWinProc(*win, Msg, wParam, lParam);
+
 				break;
 			}
 		}
 	}
-
+	else {
+		--countOfFilledWindows;
+	}
 	if (getCountOfWindows() == 0) PostQuitMessage(7);
 
 	return DefWindowProcA(hWnd, Msg, wParam, lParam);
@@ -58,7 +57,7 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 
 std::list<base_window*> base_window::listOfWindows;
 
-
+int base_window::countOfFilledWindows = 0;
 
 
 
@@ -66,7 +65,7 @@ void base_window::processWindows()
 {
 	MSG message_inst;
 	while (1) {
-
+		
 		GetMessageA(&message_inst, nullptr, 0, 0);
 		TranslateMessage(&message_inst);
 		DispatchMessageA(&message_inst);
@@ -86,8 +85,8 @@ base_window::base_window
 	int sizeY,
 	int posX, 
 	int posY,
-	windowState(*WinProc)
-	(UINT&, WPARAM, LPARAM)
+	void(*WinProc)
+	(base_window&,UINT&, WPARAM, LPARAM)
 ) 
   : windowName(windowName), 
 	width(sizeX), 
@@ -101,32 +100,28 @@ base_window::base_window
 	if (WinProc == nullptr) {
 		customWinProc = base_window::defBaseWindowProc;
 	}
+	else {
+		customWinProc = WinProc;
+	}
+
+	init();
+	show();
+	
+	++countOfFilledWindows;
 }
 
 
 base_window::~base_window()
 {
-	
+	if (mainWindow != nullptr) {
+		DestroyWindow(mainWindow);
+		--countOfFilledWindows;
+	}
 }
 
 void base_window::clearWindowList()
 {
-	for (auto& win : listOfWindows) {
-		delete win;
-	}
-}
-
-base_window* base_window::createBaseWindow(
-	const char* windowName,
-	int sizeX,
-	int sizeY,
-	int posX,
-	int posY,
-	windowState(*WinProc)
-	(UINT&, WPARAM, LPARAM)
-)
-{
-	return new base_window(windowName,sizeX,sizeY,posX,posY, WinProc);
+	listOfWindows.clear();
 }
 
 const char* base_window::getName()
@@ -136,11 +131,8 @@ const char* base_window::getName()
 
 int base_window::getCountOfWindows()
 {
-	int countOfWindows = 0;
-	for (auto& win : listOfWindows) {
-		if (win != nullptr) ++countOfWindows;
-	}
-	return countOfWindows;
+	
+	return countOfFilledWindows;
 }
 
 void base_window::init()
@@ -158,7 +150,7 @@ void base_window::init()
 
 	this->windowName = windowName;
 
-	// [ INCORRECT COORDINATES ]
+	// [ INCORRECT COORDINATES CASE ]
 	// inapropriate input of position coordinates is excluded
 	// and invokes an automatic reset of the position by placing 
 	// a window in the center of the screen
@@ -170,7 +162,7 @@ void base_window::init()
 		Y = screenSizeY / 2;
 	}
 
-	// [ INCORRECT SIZE DATA ]
+	// [ INCORRECT SIZE DATA CASE ]
 	// Window size constrains are determined in the following way :
 	// * min_Width = 100, min_height = 100;
 	// * max and min sizes are the same as sizes of screen a user has
