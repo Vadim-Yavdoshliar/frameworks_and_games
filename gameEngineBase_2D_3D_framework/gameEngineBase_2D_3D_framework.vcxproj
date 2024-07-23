@@ -127,11 +127,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Connector.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="windowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gApp.h" />
     <ClInclude Include="windowSystem.h" />
+    <ClInclude Include="WinKeyboard.h" />
+    <ClInclude Include="_conditions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

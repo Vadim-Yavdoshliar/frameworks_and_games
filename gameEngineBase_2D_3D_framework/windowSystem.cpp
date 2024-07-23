@@ -7,43 +7,50 @@
 // -------------------------------------------------
 // 
 // <START> of the field for custom window PROCEDURES
-
-void base_window::defBaseWindowProc
-(base_window& ms,UINT& msg, WPARAM wParam, LPARAM lParam)
+// 
+// -------------------------------------------------
+void WINAPI base_window::defBaseWindowProc
+(base_window& win,UINT& msg, WPARAM wParam, LPARAM lParam)
 {
-	
-	/*switch (msg) {
-	case WM_DESTROY:
-		return windowState::destroyed;
-	}*/
+
+
 
 }
 
 LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
-	if (Msg != WM_DESTROY) {
 
-		for (auto& win : listOfWindows) {
 
-			if (win->mainWindow == hWnd) {
-
-				win->customWinProc(*win, Msg, wParam, lParam);
-
-				break;
-			}
-		}
+	if (Msg == WM_CREATE) {
+		
+		CREATESTRUCTA* createStructOfWindow = reinterpret_cast<CREATESTRUCTA*>(lParam);
+		SetWindowLongPtrA(
+			hWnd, 
+			GWLP_USERDATA,
+			reinterpret_cast<LONG_PTR>(createStructOfWindow->lpCreateParams)
+		);
+		++countOfFilledWindows;
+		
 	}
 	else {
-		--countOfFilledWindows;
+	
+		if (Msg == WM_DESTROY)
+			--countOfFilledWindows;
+		base_window* windowInst = reinterpret_cast<base_window*>(GetWindowLongPtrA(hWnd, GWLP_USERDATA));
+		if (windowInst != nullptr) {
+			windowInst->customWinProc(*windowInst, Msg, wParam, lParam);
+		}
 	}
-	if (getCountOfWindows() == 0) PostQuitMessage(7);
+	
+
 
 	return DefWindowProcA(hWnd, Msg, wParam, lParam);
 }
-
+// --------------------------------------------------
+// 
 // <END> of of the field for custom window PROCEDURES
 // 
-// -------------------------------------------------
+// --------------------------------------------------
 
 
 
@@ -55,27 +62,34 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 // ----------------------------------------
 
 
-std::list<base_window*> base_window::listOfWindows;
+
+std::vector<base_window*> base_window::listOfWindows;
 
 int base_window::countOfFilledWindows = 0;
 
+const int base_window::screenSizeX = GetSystemMetrics(SM_CXSCREEN);
+const int base_window::screenSizeY = GetSystemMetrics(SM_CYSCREEN);
 
 
 void base_window::processWindows()
 {
+
 	MSG message_inst;
 	while (1) {
-		
-		GetMessageA(&message_inst, nullptr, 0, 0);
-		TranslateMessage(&message_inst);
-		DispatchMessageA(&message_inst);
-		
+		while (PeekMessageA(&message_inst, nullptr, 0, 0,PM_REMOVE)) {
 
-		if (getCountOfWindows() == 0) {
-			break;
+			TranslateMessage(&message_inst);
+			DispatchMessageA(&message_inst);
 		}
+
+		for(auto win : listOfWindows)
+				SendMessageA(win->getWND(), WM_USER + 1, 0, 0);
+	
+		if (getCountOfWindows() == 0)break;
 		
+		Sleep(1);
 	}
+
 }
 
 base_window::base_window
@@ -85,7 +99,8 @@ base_window::base_window
 	int sizeY,
 	int posX, 
 	int posY,
-	void(*WinProc)
+	base_window* parent,
+	void(WINAPI*WinProc)
 	(base_window&,UINT&, WPARAM, LPARAM)
 ) 
   : windowName(windowName), 
@@ -95,7 +110,6 @@ base_window::base_window
 	Y(posY)
 {
 
-	listOfWindows.push_back(this);
 
 	if (WinProc == nullptr) {
 		customWinProc = base_window::defBaseWindowProc;
@@ -104,10 +118,14 @@ base_window::base_window
 		customWinProc = WinProc;
 	}
 
+	if (parent != nullptr) {
+		parentWindow = parent->mainWindow;
+	}
+
 	init();
 	show();
-	
-	++countOfFilledWindows;
+
+	listOfWindows.push_back(this);
 }
 
 
@@ -115,7 +133,6 @@ base_window::~base_window()
 {
 	if (mainWindow != nullptr) {
 		DestroyWindow(mainWindow);
-		--countOfFilledWindows;
 	}
 }
 
@@ -145,8 +162,6 @@ void base_window::init()
 	}
 
 	// [ SCREEN DATA CATCHING ] 
-	int screenSizeX = GetSystemMetrics(SM_CXSCREEN);
-	int screenSizeY = GetSystemMetrics(SM_CYSCREEN);
 
 	this->windowName = windowName;
 
@@ -184,15 +199,15 @@ void base_window::init()
 		0,
 		WNDCLASSconfig::getWNDCLASSname(),
 		windowName,
-		WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED | WS_CAPTION | WS_THICKFRAME,
+		WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED | WS_CAPTION,
 		X,
 		Y,
 		width,
 		height,
-		nullptr,
+		parentWindow,
 		nullptr,
 		WNDCLASSconfig::getMainHandler(),
-		nullptr
+		this
 	);
 	
 }
@@ -202,12 +217,68 @@ void base_window::show()
 	if(mainWindow != nullptr)
 	ShowWindow(mainWindow, SW_SHOW);
 	
+	
 }
 
 void base_window::hide()
 {
 	if (mainWindow != nullptr)
 	ShowWindow(mainWindow, SW_HIDE);
+}
+
+void base_window::setPosition(int x,int y)
+{
+	if (x > -1 && x < screenSizeX + 1
+		&& y > -1 && y < screenSizeY + 1) {
+	
+		this->X = x;
+		this->Y = y;
+
+		SetWindowPos(
+			mainWindow
+			, HWND_TOP
+			, x
+			, y
+			, width
+			, height
+			, SWP_SHOWWINDOW | SWP_NOSIZE
+		);
+	}
+}
+
+void base_window::setSize(int width, int height)
+{
+	if (width < 100 || height < 100 ||
+		width > screenSizeX || height > screenSizeY) {
+
+		width = screenSizeX / 3;
+		height = screenSizeY / 3;
+
+	}
+	else {
+		this->width = width;
+		this->height = height;
+
+		SetWindowPos(
+			mainWindow
+			, HWND_TOP
+			, X
+			, Y
+			, width
+			, height
+			, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_DRAWFRAME
+		);
+	}
+}
+
+void base_window::setWindowTitle(const char* newTitle)
+{
+	SetWindowTextA(mainWindow, newTitle);
+}
+
+void base_window::destroy()
+{
+	DestroyWindow(mainWindow);
 }
 
 // ----------------------------------------
@@ -246,7 +317,7 @@ WNDCLASSconfig::WNDCLASSconfig() {
 	windowClassInst.style = CS_OWNDC;
 	windowClassInst.lpfnWndProc = base_window::baseWindowProc;
 	windowClassInst.hInstance = currHANDLER;
-	windowClassInst.cbClsExtra = 0;
+	windowClassInst.cbClsExtra = sizeof(base_window);
 	windowClassInst.cbWndExtra = 0;
 	windowClassInst.hIcon = nullptr;
 	windowClassInst.hCursor = nullptr;

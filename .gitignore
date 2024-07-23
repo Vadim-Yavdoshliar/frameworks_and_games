@@ -31,6 +31,74 @@
 *.out
 *.app
 
-Browse.VC.opendb
+# Visual Studio files and folders
+.vscode/
+.vs/
+*.vcxproj.user
+*.vcxproj.filters
+*.vcxproj.*.user
+*.user
+*.ipch
+*.sdf
+*.opensdf
+*.suo
+*.tlog
+*.lastbuildstate
+*.log
+*.cache
+*.ilk
+*.ncb
+*.pch
+*.pdb
+*.pgc
+*.pgd
+*.rsp
 
-/.vs
+# Visual Studio Code workspace settings
+.vscode/
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+CTestTestfile.cmake
+cmake_install.cmake
+Makefile
+
+# Code Composer Studio files
+/.metadata/
+*.launches/
+
+# Qt files
+*.pro.user
+*.qmake.stash
+
+# Others
+*.DS_Store
+Thumbs.db
+
+# Custom Exclusions
+# Add other directories and files you want to ignore here
+
+# Exclude the entire bin and obj directories
+bin/
+obj/
+
+# Exclude debug and release folders
+Debug/
+Release/
+
+# Backup files
+*.bak
+*.swp
+
+# IDE specific
+.idea/
+.vscode/
+
+# Compiler generated
+*.idb
+*.ipdb
+
+# Add .gitignore itself
+.gitignore

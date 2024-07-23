@@ -3,36 +3,41 @@
 #ifndef _WINDOW_
 #define _WINDOW_
 
-#include <Windows.h>
-#include <list>
-#include <ctime>
+
+
+#include "WinKeyboard.h"
 
 
 class base_window {
 
 public:
-
-	enum action {
-		show_,
-		hide_,
-		destroy,
-	};
+	
+	static const int screenSizeX;
+	static const int screenSizeY;
 
 private:
-
+	
+	// Includes all windows with not null HWND mainWindow field 
+	// (whether the window is hidden or not)
 	static int countOfFilledWindows;
 
-	static void defBaseWindowProc
+	// Default window procedure, it's automatically set up for window
+	// where the custom window procedure hasn't been passed 
+	static void WINAPI defBaseWindowProc
 	(base_window&,UINT&, WPARAM, LPARAM);
 
-	void(*customWinProc) (base_window&,UINT&, WPARAM, LPARAM);
+	// Pointer to the custom window procedure of the window. 
+	// Acts as the element to obtain unique window procedure for every window
+	void(WINAPI*customWinProc) (base_window&,UINT&, WPARAM, LPARAM);
 
+	// Window name and window pointer
 	const char* windowName;
 	HWND mainWindow = nullptr;
+	HWND parentWindow = nullptr;
 
-	static std::list<base_window*> listOfWindows;
+	static std::vector<base_window*> listOfWindows;
 
-	int X, Y;
+	int X, Y; // Window position
 	int width, height;
 
 public:
@@ -43,10 +48,13 @@ public:
 		int sizeY = 0, 
 		int posX = -1, 
 		int posY = -1,
-		void(*WinProc)
+		base_window* parent = nullptr,
+		void(WINAPI*WinProc)
 		(base_window&, UINT&, WPARAM, LPARAM) = nullptr);
 
-	
+	base_window(const base_window&) = delete;
+	base_window(base_window&&) = delete;
+	base_window* operator=(const base_window&) = delete;
 
 public:
 
@@ -56,6 +64,7 @@ public:
 		WPARAM wParam,
 		LPARAM lParam
 	);
+
 
 	static void processWindows();
 	
@@ -67,11 +76,17 @@ public:
 	static void clearWindowList();
 
 	const char* getName();
+	HWND getWND() { return mainWindow; }
 	static int getCountOfWindows();
 	
+
 	virtual void init();
 	virtual void show();
 	virtual void hide();
+	virtual void setPosition(int x,int y);
+	virtual void setSize(int width, int height);
+	virtual void setWindowTitle(const char*);
+	virtual void destroy();
 
 };
 
@@ -81,20 +96,20 @@ class WNDCLASSconfig {
 
 private:
 
-	static WNDCLASSconfig mainClass; // single instance if current class
+	static WNDCLASSconfig mainClass; // single instance of current class
 
 	WNDCLASSEXA windowClassInst; // exact winAPI class
 
 	const char* WNDCLASSname = "baseWNDClass";
 	
-	HINSTANCE currHANDLER; // handler for all objects produced in this class
+	HINSTANCE currHANDLER; // handler for all objects produced with this class
 
 private:
 
 	WNDCLASSconfig();
 
 private:
-	// ansure that the class cant be copied or moved
+	// ansure that the class can't be copied or moved
 	WNDCLASSconfig(const WNDCLASSconfig&) = delete;
 	WNDCLASSconfig(WNDCLASSconfig&&) = delete;
 	WNDCLASSconfig operator=(const WNDCLASSconfig&) = delete;
