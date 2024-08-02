@@ -7,6 +7,7 @@
 
 #include "WinKeyboard.h"
 
+#define WindowProcedureFunction(name) void WINAPI name(base_window& win ,UINT& msg, WPARAM wp, LPARAM lp)
 
 class base_window {
 
@@ -31,7 +32,7 @@ private:
 	void(WINAPI*customWinProc) (base_window&,UINT&, WPARAM, LPARAM);
 
 	// Window name and window pointer
-	const char* windowName;
+	std::string windowName;
 	HWND mainWindow = nullptr;
 	HWND parentWindow = nullptr;
 
@@ -40,7 +41,11 @@ private:
 	int X, Y; // Window position
 	int width, height;
 
+	
+
 public:
+
+	WinKeyboard mainKeyboard;
 
 	base_window(
 		const char*, 
@@ -67,6 +72,7 @@ public:
 
 
 	static void processWindows();
+	void processWindowTick();
 	
 	virtual ~base_window();
 
@@ -85,13 +91,13 @@ public:
 	virtual void hide();
 	virtual void setPosition(int x,int y);
 	virtual void setSize(int width, int height);
-	virtual void setWindowTitle(const char*);
+	virtual void setTitle(const char*);
 	virtual void destroy();
 
 };
 
 
-// class with only one instance of itself
+// (SINGLETON) class for auto registering win32 window class
 class WNDCLASSconfig {
 
 private:

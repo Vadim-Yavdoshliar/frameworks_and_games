@@ -5,6 +5,7 @@
 
 #define _DEBUG_INFO_
 //#define _TEST_
+#define _gAPP_test_
 
 #include <Windows.h>
 #include <vector>

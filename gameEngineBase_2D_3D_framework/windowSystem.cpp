@@ -12,8 +12,21 @@
 void WINAPI base_window::defBaseWindowProc
 (base_window& win,UINT& msg, WPARAM wParam, LPARAM lParam)
 {
-
-
+	
+	win.mainKeyboard.setKey(0x57);
+	if (win.mainKeyboard.getState() != WinKeyboard::none) {
+		if (win.mainKeyboard.getState() == WinKeyboard::Pressed) {
+			if (win.windowName != "Abracadabra") {
+			win.setTitle("Abracadabra");
+			}
+		}
+			
+	}
+	else {
+		if (win.windowName != "Nothing happening") {
+			win.setTitle("Nothing happening");
+		}
+	}
 
 }
 
@@ -38,7 +51,9 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 			--countOfFilledWindows;
 		base_window* windowInst = reinterpret_cast<base_window*>(GetWindowLongPtrA(hWnd, GWLP_USERDATA));
 		if (windowInst != nullptr) {
+			windowInst->mainKeyboard.processKeyMessage(Msg, lParam, wParam);
 			windowInst->customWinProc(*windowInst, Msg, wParam, lParam);
+			windowInst->mainKeyboard.reviewKeys();
 		}
 	}
 	
@@ -83,7 +98,7 @@ void base_window::processWindows()
 		}
 
 		for(auto win : listOfWindows)
-				SendMessageA(win->getWND(), WM_USER + 1, 0, 0);
+				if(win!=nullptr)SendMessageA(win->getWND(), WM_USER + 1, 0, 0);
 	
 		if (getCountOfWindows() == 0)break;
 		
@@ -136,6 +151,20 @@ base_window::~base_window()
 	}
 }
 
+void base_window::processWindowTick()
+{
+	MSG message_inst;
+		while (PeekMessageA(&message_inst, mainWindow, 0, 0, PM_REMOVE)) {
+
+			TranslateMessage(&message_inst);
+			DispatchMessageA(&message_inst);
+		}
+
+		SendMessageA(mainWindow, WM_USER + 1, 0, 0);
+
+		Sleep(1);
+}
+
 void base_window::clearWindowList()
 {
 	listOfWindows.clear();
@@ -143,7 +172,7 @@ void base_window::clearWindowList()
 
 const char* base_window::getName()
 {
-	return this->windowName;
+	return this->windowName.c_str();
 }
 
 int base_window::getCountOfWindows()
@@ -155,7 +184,8 @@ int base_window::getCountOfWindows()
 void base_window::init()
 {
 	// [ FUNCTION SPECIFIC ]
-	// Is virtual. Gives the opportunity to extend functional in derivative classes
+	// Is virtual. init() function can be overriden for extending or changing the
+	// window initilisation in derivative classes
 
 	if (mainWindow != nullptr) {
 		DestroyWindow(mainWindow);
@@ -180,10 +210,10 @@ void base_window::init()
 	// [ INCORRECT SIZE DATA CASE ]
 	// Window size constrains are determined in the following way :
 	// * min_Width = 100, min_height = 100;
-	// * max and min sizes are the same as sizes of screen a user has
+	// * max sizes are the same as sizes of user's screen
 	// 
-	// * default sizes are included when data entered incorrectly and equal the third part 
-	//   of screen sides for every dimemsion of the window
+	// * default sizes are included when data entered incorrectly and equal to the third part 
+	//   of a screen sides for every dimemsion of the window
 	//	 width = screen_width / 3; height = screen_height / 3
 
 	if (width < 100 || height < 100 ||
@@ -198,8 +228,8 @@ void base_window::init()
 	(
 		0,
 		WNDCLASSconfig::getWNDCLASSname(),
-		windowName,
-		WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED | WS_CAPTION,
+		windowName.c_str(),
+		WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED | WS_CAPTION,
 		X,
 		Y,
 		width,
@@ -271,9 +301,10 @@ void base_window::setSize(int width, int height)
 	}
 }
 
-void base_window::setWindowTitle(const char* newTitle)
+void base_window::setTitle(const char* newTitle)
 {
-	SetWindowTextA(mainWindow, newTitle);
+	windowName = newTitle;
+	SetWindowTextA(mainWindow, windowName.c_str());
 }
 
 void base_window::destroy()

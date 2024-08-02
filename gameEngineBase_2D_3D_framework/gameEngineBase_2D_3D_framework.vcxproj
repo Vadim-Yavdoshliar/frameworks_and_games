@@ -130,11 +130,13 @@
     <ClCompile Include="Connector.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="windowSystem.cpp" />
+    <ClCompile Include="WinKeyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gApp.h" />
     <ClInclude Include="windowSystem.h" />
     <ClInclude Include="WinKeyboard.h" />
+    <ClInclude Include="WinMouse.h" />
     <ClInclude Include="_conditions.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

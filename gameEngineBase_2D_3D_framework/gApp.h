@@ -4,9 +4,16 @@
 
 #define _gAPP_
 
+#define runApp(gAppInst) gAPP::run(gAppInst);
+
+#define _MAIN_DECL_ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams, int wndStatus)
+
 class gAPP {
 
 protected:
+
+	const char* gName = "My new game";
+	int width = 500, height = 500;
 
 	enum gKey {
 		ForwardKey,
@@ -16,10 +23,7 @@ protected:
 		SpaceKey,
 		ShiftKey,
 		CtrlKey,
-		TabKey
-	};
-
-	enum menuKey {
+		TabKey,
 		EscKey,
 		BackspaceKey,
 		EnterKey
@@ -32,11 +36,23 @@ protected:
 
 public:
 
-	virtual void tick() = 0;
+	// Initialisation of all objects you need
 	virtual void init() = 0;
-	virtual void gKeyPressed() = 0;
-	virtual void menuKeyPressed() = 0;
-	virtual void mouseKeyPressed() = 0;
+
+	// Actions which must be handled every tick
+	virtual void tick() = 0;
+	
+
+	// User's input processing functions
+
+	virtual void gKeyPressed(gKey) = 0;
+	virtual void mouseKeyPressed(mouseKey) = 0;
+
+	virtual void gKeyReleased(gKey) = 0;
+	virtual void mouseKeyReleased(mouseKey) = 0;
+
+	virtual void gKeyHeld(gKey) = 0;
+	virtual void mouseKeyHeld(mouseKey) = 0;
 
 	static int run(gAPP*);
 

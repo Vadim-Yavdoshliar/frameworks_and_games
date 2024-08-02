@@ -5,6 +5,42 @@
 
 #include "_conditions.h"
 
+// ********************************
+// ------------------------------**
+//                               **
+// WinKeyboard workflow diagram  **
+//                               **
+// ------------------------------**
+// ********************************
+
+
+/*
+
+   |-----------------|               |-------------------|
+   |                 |  Passing msg  |                   |
+   | Vector of keys  <---------------| Window (C++ side) |
+   |                 |               |                   |
+   |------/\---------|               |-------------------|
+          |
+          |
+          |
+   |------|---------------------|
+   |                            |
+   | One key for getting data   |
+   |                            |
+   |------/\--------------------|
+          |
+          |
+          |
+   |------|----------------|
+   |                       |
+   |  Methods to interact  |
+   |  with choosen key     |
+   |                       |
+   |-----------------------|
+
+*/
+
 class WinKeyboard {
 
 public:
@@ -20,27 +56,26 @@ protected:
 
 	struct Key {
 
-		keyState state = none;
+		mutable keyState state = none;
 
-		char letter = '\0';
 		int virtualKeyValue;
+
 	};
 
 private:
-
-	std::set<WinKeyboard::Key> keyBuffer;
+	
+	std::vector<WinKeyboard::Key> keyBuffer;
 	Key currentKey;
 
 public:
 
-	char getChar();
-	int getKey();
-	Key getState();
-	void setNext();
+	WinKeyboard();
 
-
-
-
+	void setKey(int vk_code);
+	keyState getState();
+	
+	void processKeyMessage(UINT, LPARAM, WPARAM);
+	void reviewKeys();
 };
 
 #endif
