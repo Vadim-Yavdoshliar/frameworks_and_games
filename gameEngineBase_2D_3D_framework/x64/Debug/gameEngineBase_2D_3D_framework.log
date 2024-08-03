@@ -1,8 +1,0 @@
-﻿  Connector.cpp
-  WinKeyboard.cpp
-D:\CodeProjects\WinAPI\frameworks_and_games\gameEngineBase_2D_3D_framework\WinKeyboard.cpp(36,31): warning C4244: '=': conversion from 'WPARAM' to 'int', possible loss of data
-  windowSystem.cpp
-  Generating Code...
-  gameEngineBase_2D_3D_framework.vcxproj -> D:\CodeProjects\WinAPI\frameworks_and_games\gameEngineBase_2D_3D_framework\x64\Debug\gameEngineBase_2D_3D_framework.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
