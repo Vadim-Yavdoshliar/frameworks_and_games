@@ -83,9 +83,9 @@ class MyGame : public gAPP {
 
 _MAIN_DECL_{
 
-
+	
 	return runApp(new MyGame);
-
+	
 }
 
 #endif // _gAPP_test_

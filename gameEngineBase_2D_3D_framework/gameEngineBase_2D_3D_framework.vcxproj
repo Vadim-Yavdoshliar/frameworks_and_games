@@ -128,12 +128,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Connector.cpp" />
+    <ClCompile Include="graphicsControl.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="windowSystem.cpp" />
     <ClCompile Include="WinKeyboard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gApp.h" />
+    <ClInclude Include="graphicsControl.h" />
     <ClInclude Include="windowSystem.h" />
     <ClInclude Include="WinKeyboard.h" />
     <ClInclude Include="WinMouse.h" />

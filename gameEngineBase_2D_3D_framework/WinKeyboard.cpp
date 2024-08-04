@@ -37,18 +37,18 @@ void WinKeyboard::processKeyMessage
 	if (msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN)
 	{
 		enteredKey.state = Pressed;
-		if (keyBuffer[(int)wParam - 1].state == enteredKey.state) { 
+		if (keyBuffer[(size_t)wParam - 1].state == enteredKey.state) {
 			
-			keyBuffer[(int)wParam - 1].state = WinKeyboard::Held;
+			keyBuffer[(size_t)wParam - 1].state = WinKeyboard::Held;
 		}
 		else {
-			keyBuffer[(int)wParam - 1] = enteredKey;
+			keyBuffer[(size_t)wParam - 1] = enteredKey;
 		}
 	}
 	else if (msg == WM_KEYUP || msg == WM_SYSKEYUP)
 	{
 	    enteredKey.state = Released;
-		keyBuffer[(int)wParam - 1] = enteredKey;
+		keyBuffer[(size_t)wParam - 1] = enteredKey;
 	}
 
 	

@@ -6,12 +6,15 @@
 
 
 #include "WinKeyboard.h"
+#include "graphicsControl.h"
 
 #define WindowProcedureFunction(name) void WINAPI name(base_window& win ,UINT& msg, WPARAM wp, LPARAM lp)
 
 class base_window {
 
 public:
+
+	graphicsControl* graphicsStation = nullptr;
 	
 	static const int screenSizeX;
 	static const int screenSizeY;
@@ -93,6 +96,12 @@ public:
 	virtual void setSize(int width, int height);
 	virtual void setTitle(const char*);
 	virtual void destroy();
+
+	int getWidth() { return width; }
+	int getHeight() { return height; }
+
+	int getPosX() { return X; }
+	int getPosY() { return Y; }
 
 };
 

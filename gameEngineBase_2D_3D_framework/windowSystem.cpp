@@ -141,6 +141,9 @@ base_window::base_window
 	show();
 
 	listOfWindows.push_back(this);
+
+	if (mainWindow != nullptr)
+		graphicsStation = new graphicsControl(this);
 }
 
 
@@ -149,6 +152,8 @@ base_window::~base_window()
 	if (mainWindow != nullptr) {
 		DestroyWindow(mainWindow);
 	}
+
+	delete graphicsStation;
 }
 
 void base_window::processWindowTick()
@@ -162,7 +167,10 @@ void base_window::processWindowTick()
 
 		SendMessageA(mainWindow, WM_USER + 1, 0, 0);
 
-		Sleep(1);
+		if(graphicsStation!=nullptr)
+			graphicsStation->showFrame();
+		
+		Sleep(10);
 }
 
 void base_window::clearWindowList()
