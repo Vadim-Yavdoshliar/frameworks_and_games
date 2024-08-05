@@ -25,7 +25,7 @@ void WINAPI base_window::defBaseWindowProc
 				win.setTitle("Nothing happening");
 			}
 		}
-		// apply new changes in this branch	
+		// some different changes
 	}
 	else {
 		if (win.windowName != "Nothing happening") {
