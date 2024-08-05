@@ -19,6 +19,7 @@ void WINAPI base_window::defBaseWindowProc
 			if (win.windowName != "Abracadabra") {
 			win.setTitle("Abracadabra");
 			}
+			//hi
 		}
 		else {
 			if (win.windowName != "Nothing happening") {
