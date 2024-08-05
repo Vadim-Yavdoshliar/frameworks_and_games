@@ -15,9 +15,14 @@ void WINAPI base_window::defBaseWindowProc
 	
 	win.mainKeyboard.setKey(0x57);
 	if (win.mainKeyboard.getState() != WinKeyboard::none) {
-		if (win.mainKeyboard.getState() == WinKeyboard::Pressed) {
+		if (win.mainKeyboard.getState() == WinKeyboard::Held) {
 			if (win.windowName != "Abracadabra") {
 			win.setTitle("Abracadabra");
+			}
+		}
+		else {
+			if (win.windowName != "Nothing happening") {
+				win.setTitle("Nothing happening");
 			}
 		}
 			

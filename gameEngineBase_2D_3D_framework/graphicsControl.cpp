@@ -9,8 +9,8 @@ graphicsControl::graphicsControl(base_window* winInst)
 		
 		textureDesc.BufferDesc.Width = 0;
 		textureDesc.BufferDesc.Height = 0;
-		textureDesc.BufferDesc.RefreshRate.Numerator = 0;
-		textureDesc.BufferDesc.RefreshRate.Denominator = 0;
+		textureDesc.BufferDesc.RefreshRate.Numerator = 60;
+		textureDesc.BufferDesc.RefreshRate.Denominator = 1;
 		textureDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		textureDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 		textureDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
@@ -39,15 +39,13 @@ graphicsControl::graphicsControl(base_window* winInst)
 				NULL,
 				&ppContext
 			);
+     
 	}
 }
 
 graphicsControl::~graphicsControl()
 {
 	
-	if (ppContext != nullptr) ppContext->Release();
-	if (ppSwapChain != nullptr) ppSwapChain->Release();
-	if (ppDevice != nullptr) ppDevice->Release();
 }
 
 void graphicsControl::showFrame()

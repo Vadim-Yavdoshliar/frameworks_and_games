@@ -71,6 +71,7 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 #include "gApp.h"
 
 class MyGame : public gAPP {
+
 	void init() override {}
 	void tick() override {}
 	void gKeyPressed(gKey) override {}
@@ -89,3 +90,8 @@ _MAIN_DECL_{
 }
 
 #endif // _gAPP_test_
+
+
+
+
+

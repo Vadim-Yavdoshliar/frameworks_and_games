@@ -15,5 +15,9 @@
 #include <set>
 #include <d3d11.h>
 #pragma comment (lib,"d3d11")
+#include <wrl.h>
+//#include <WICTextureLoader.h>
+
+namespace COM = Microsoft::WRL;
 
 #endif

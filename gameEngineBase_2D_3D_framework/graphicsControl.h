@@ -5,17 +5,17 @@
 
 #include "_conditions.h"
 
+
+
 class base_window;
-
-
 
 class graphicsControl {
 
 protected:
 
-	ID3D11Device* ppDevice = nullptr;
-	ID3D11DeviceContext* ppContext = nullptr;
-	IDXGISwapChain* ppSwapChain = nullptr;
+	COM::ComPtr<ID3D11Device> ppDevice;
+	COM::ComPtr<ID3D11DeviceContext> ppContext;
+	COM::ComPtr<IDXGISwapChain>ppSwapChain;
 	
 	base_window* gWindow = nullptr;
 
