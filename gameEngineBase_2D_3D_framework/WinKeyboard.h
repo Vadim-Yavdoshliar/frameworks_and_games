@@ -41,6 +41,8 @@
 
 */
 
+#define DEF_KEY -100
+
 class WinKeyboard {
 
 public:
@@ -73,9 +75,10 @@ public:
 
 	void setKey(int vk_code);
 	keyState getState();
+	void clearKey();
 	
 	void processKeyMessage(UINT, LPARAM, WPARAM);
-	void reviewKeys();
+
 };
 
 #endif
