@@ -32,6 +32,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="windowSystem.cpp" />
     <ClCompile Include="WinKeyboard.cpp" />
+    <ClCompile Include="WinMouse.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

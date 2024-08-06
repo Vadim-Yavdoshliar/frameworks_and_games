@@ -41,7 +41,7 @@ void WinKeyboard::processKeyMessage
 			
 			keyBuffer[(size_t)wParam - 1].state = WinKeyboard::Held;
 		}
-		else {
+		else if (keyBuffer[(size_t)wParam - 1].state != WinKeyboard::Held) {
 			keyBuffer[(size_t)wParam - 1] = enteredKey;
 		}
 	}
@@ -57,7 +57,7 @@ void WinKeyboard::processKeyMessage
 void WinKeyboard::reviewKeys()
 {
 	for (auto& rkey : keyBuffer) {
-		rkey.state = (rkey.state == Pressed) ? Held : rkey.state;
+		//rkey.state = (rkey.state == Pressed) ? Held : rkey.state;
 		rkey.state = (rkey.state == Released) ? none : rkey.state;
 	}
 }
