@@ -12,7 +12,8 @@
 void WINAPI base_window::defBaseWindowProc
 (base_window& win,UINT& msg, WPARAM wParam, LPARAM lParam)
 {
-	
+
+	//keyboard test
 	win.mainKeyboard.setKey(0x57);
 	if (win.mainKeyboard.getState() != WinKeyboard::none) {
 		switch (win.mainKeyboard.getState()) {
@@ -28,25 +29,16 @@ void WINAPI base_window::defBaseWindowProc
 		default:
 			break;
 		}
-		/*if (win.mainKeyboard.getState() == WinKeyboard::Pressed) {
-			if (win.windowName != "Abracadabra") {
-			win.setTitle("Abracadabra");
-			}
-		}
-		else {
-			if (win.windowName != "Nothing happening") {
-				win.setTitle("Nothing happening");
-			}
-		}*/	
 	}
 
 
-	if (win.mainMouse.getState() != WinMouse::none) {
-		switch (win.mainMouse.getState()) {
+	//mouse test
+	/*if (win.mainMouse.getLeftKeyState() != WinMouse::none) {
+		switch (win.mainMouse.getLeftKeyState()) {
 		case WinMouse::Pressed:
 			if (win.windowName != "PressedMouse") win.setTitle("PressedMouse");
 			break;
-		case WinMouse::Held: //TODO
+		case WinMouse::Held:
 			if (win.windowName != "HeldMouse") win.setTitle("HeldMouse");
 			break;
 		case WinMouse::Released:
@@ -55,7 +47,8 @@ void WINAPI base_window::defBaseWindowProc
 		default:
 			break;
 		}
-	}
+	}*/
+
 
 }
 
@@ -84,8 +77,6 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 			windowInst->mainMouse.processKeyMessage(Msg, lParam, wParam);
 			windowInst->customWinProc(*windowInst, Msg, wParam, lParam);
 			windowInst->mainKeyboard.reviewKeys();
-
-			
 			windowInst->mainMouse.reviewKeys();
 		}
 	}

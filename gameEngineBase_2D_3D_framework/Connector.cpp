@@ -8,11 +8,31 @@ int gAPP::run(gAPP* mainAPP) {
 	mainAPP->init();
 
 	base_window gWindow(mainAPP->gName, mainAPP->width, mainAPP->height, -1, -1);
-	base_window win2("win2");
 	while (base_window::getCountOfWindows() != 0) {
 		mainAPP->tick();
+
+		//mouse test
+		/*if (gWindow.mainMouse.getLeftKeyState() == WinMouse::Pressed) {
+			if (gWindow.getName() != "Pressed") gWindow.setTitle("Pressed");
+		}
+		else if (gWindow.mainMouse.getLeftKeyState() == WinMouse::Held) {
+			if (gWindow.getName() != "Held") gWindow.setTitle("Held");
+		}*/
+
+
+		//Scroll test
+		if (gWindow.mainMouse.getScrollDelta() == 0) {
+			if (gWindow.getName() != "0") gWindow.setTitle("0");
+		}
+		else if (gWindow.mainMouse.getScrollDelta() > 0) {
+			if (gWindow.getName() != "1") gWindow.setTitle("1");
+		}
+		else {
+			if (gWindow.getName() != "-1") gWindow.setTitle("-1");
+		}
+
+		gWindow.mainMouse.reviewKeys();
 		gWindow.processWindowTick();
-		win2.processWindowTick();
 	}
 
 	delete mainAPP;
