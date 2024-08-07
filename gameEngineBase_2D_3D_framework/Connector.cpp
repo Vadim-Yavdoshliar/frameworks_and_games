@@ -2,6 +2,14 @@
 #include "gApp.h"
 #include "windowSystem.h"
 
+void passKeyMessage(base_window& keyboardAccess,gAPP::gKey keyName,gAPP*, int vk_code_1, int vk_code_2 = -1) {
+	
+	keyboardAccess.mainKeyboard.setKey(vk_code_1);
+	if (keyboardAccess.mainKeyboard.getState() == WinKeyboard::none) {
+		
+	}
+}
+
 int gAPP::run(gAPP* mainAPP) {
 
 #ifdef _DEBUG_INFO_
@@ -34,6 +42,7 @@ int gAPP::run(gAPP* mainAPP) {
 		//	if (gWindow.getName() != "None") gWindow.setTitle("None");
 		//	break;
 		
+
 		// up(w) keys : 0x26 , 0x57 
 		// left(a) keys : 0x25 , 0x41
 		// down(s) keys : 0x28 , 0x53
@@ -42,6 +51,7 @@ int gAPP::run(gAPP* mainAPP) {
 		
 		gWindow.mainKeyboard.setKey(0x57);
 
+		if(gWindow.mainKeyboard.getState() == WinKeyboard::Pressed){}
 		
 		if (gWindow.mainKeyboard.getState() == WinKeyboard::Released) {
 
