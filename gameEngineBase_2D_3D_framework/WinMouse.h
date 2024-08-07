@@ -38,7 +38,6 @@ protected:
 
 		mutable keyState state = none;
 		int virtualKeyValue;
-		Coordinate keyCoordinate;
 	};
 
 private:
@@ -49,6 +48,7 @@ private:
 	
 private:
 	int scrollDelta = 0;
+	Coordinate keyCoordinate;
 
 public:
 
@@ -59,10 +59,7 @@ public:
 	keyState getMiddleKeyState();
 	keyState getSideKeyState();
 
-	Coordinate getRightKeyCoordinate();
-	Coordinate getLeftKeyCoordinate();
-	Coordinate getMiddleKeyCoordinate();
-	Coordinate getSideKeyCoordinate();
+	Coordinate getMouseCoordinate();
 
 	int getScrollDelta();
 

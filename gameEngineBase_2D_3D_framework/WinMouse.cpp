@@ -24,20 +24,8 @@ WinMouse::keyState WinMouse::getSideKeyState() {
     return sideKey.state;
 }
 
-WinMouse::Coordinate WinMouse::getRightKeyCoordinate() {
-    return rightKey.keyCoordinate;
-}
-
-WinMouse::Coordinate WinMouse::getLeftKeyCoordinate() {
-    return leftKey.keyCoordinate;
-}
-
-WinMouse::Coordinate WinMouse::getMiddleKeyCoordinate() {
-    return middleKey.keyCoordinate;
-}
-
-WinMouse::Coordinate WinMouse::getSideKeyCoordinate() {
-    return sideKey.keyCoordinate;
+WinMouse::Coordinate WinMouse::getMouseCoordinate() {
+    return WinMouse::keyCoordinate;
 }
 
 void WinMouse::processKeyMessage(UINT msg, LPARAM lParam, WPARAM wParam) {
@@ -45,72 +33,69 @@ void WinMouse::processKeyMessage(UINT msg, LPARAM lParam, WPARAM wParam) {
     {
     case WM_LBUTTONDOWN:
     {
-        leftKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        leftKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         leftKey.state = WinMouse::Pressed;
         break;
     }
     case WM_LBUTTONUP:
     {
-        leftKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        leftKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         leftKey.state = WinMouse::Released;
         break;
     }
     case WM_RBUTTONDOWN:
     {
-        rightKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        rightKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         rightKey.state = WinMouse::Pressed;
         break;
     }
     case WM_RBUTTONUP:
     {
-        rightKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        rightKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         rightKey.state = WinMouse::Released;
         break;
     }
     case WM_MBUTTONDOWN:
     {
-        middleKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        middleKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         middleKey.state = WinMouse::Pressed;
         break;
     }
     case WM_MBUTTONUP:
     {
-        middleKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        middleKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         middleKey.state = WinMouse::Released;
         break;
     }
     case WM_XBUTTONDOWN:
     {
-        sideKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        sideKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         sideKey.state = WinMouse::Pressed;
         break;
     }
     case WM_XBUTTONUP:
     {
-        sideKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-        sideKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         sideKey.state = WinMouse::Released;
         break;
     }
     case WM_MOUSEMOVE:
     {
-        if (wParam & MK_LBUTTON) {
-            leftKey.keyCoordinate.x = GET_X_LPARAM(lParam);
-            leftKey.keyCoordinate.y = GET_Y_LPARAM(lParam);
-            leftKey.state = WinMouse::Held;
-        }
+        keyCoordinate.x = GET_X_LPARAM(lParam);
+        keyCoordinate.y = GET_Y_LPARAM(lParam);
         break;
     }
     case WM_MOUSEWHEEL:
     {
-        scrollDelta += GET_WHEEL_DELTA_WPARAM(wParam);
+        scrollDelta = GET_WHEEL_DELTA_WPARAM(wParam);
         break;
     }
     default:
