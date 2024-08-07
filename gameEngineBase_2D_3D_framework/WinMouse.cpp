@@ -29,6 +29,7 @@ WinMouse::Coordinate WinMouse::getMouseCoordinate() {
 }
 
 void WinMouse::processKeyMessage(UINT msg, LPARAM lParam, WPARAM wParam) {
+
     switch (msg)
     {
     case WM_LBUTTONDOWN:
@@ -117,7 +118,6 @@ void WinMouse::processKeyMessage(UINT msg, LPARAM lParam, WPARAM wParam) {
         break;
     }
 
-
 }
 
 void WinMouse::reviewKeys() {
@@ -125,5 +125,7 @@ void WinMouse::reviewKeys() {
     if (leftKey.state == WinMouse::Released) leftKey.state = WinMouse::none;
     if (middleKey.state == WinMouse::Released) middleKey.state = WinMouse::none;
     if (sideKey.state == WinMouse::Released) sideKey.state = WinMouse::none;
+   
 }
+
 

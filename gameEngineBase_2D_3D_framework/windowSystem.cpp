@@ -16,6 +16,7 @@ void WINAPI base_window::defBaseWindowProc
 	//keyboard test
 	win.mainKeyboard.setKey(0x57);
 	if (win.mainKeyboard.getState() != WinKeyboard::none) {
+
 		switch (win.mainKeyboard.getState()) {
 		case WinKeyboard::Pressed:
 			if (win.windowName != "Pressed") win.setTitle("Pressed");
@@ -24,9 +25,12 @@ void WINAPI base_window::defBaseWindowProc
 			if (win.windowName != "Held") win.setTitle("Held");
 			break;
 		case WinKeyboard::Released:
-			if (win.windowName != "Released") win.setTitle("Released");
+			if (win.windowName != "Released") {
+				win.setTitle("Released");
+			}
 			break;
 		default:
+			if (win.windowName != "None") win.setTitle("None");
 			break;
 		}
 	}
@@ -49,6 +53,26 @@ void WINAPI base_window::defBaseWindowProc
 		}
 	}*/
 
+
+
+	
+
+
+	//if (win.mainMouse.getState() != WinMouse::none) {
+	//	switch (win.mainMouse.getState()) {
+	//	case WinMouse::Pressed:
+	//		if (win.windowName != "PressedMouse") win.setTitle("PressedMouse");
+	//		break;
+	//	case WinMouse::Held: //TODO
+	//		if (win.windowName != "HeldMouse") win.setTitle("HeldMouse");
+	//		break;
+	//	case WinMouse::Released:
+	//		if (win.windowName != "ReleasedMouse") win.setTitle("ReleasedMouse");
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
 
 }
 
@@ -76,8 +100,7 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 			windowInst->mainKeyboard.processKeyMessage(Msg, lParam, wParam);
 			windowInst->mainMouse.processKeyMessage(Msg, lParam, wParam);
 			windowInst->customWinProc(*windowInst, Msg, wParam, lParam);
-			windowInst->mainKeyboard.reviewKeys();
-			windowInst->mainMouse.reviewKeys();
+			windowInst->mainMouse.reviewKeys();;;
 		}
 	}
 	
@@ -194,7 +217,7 @@ void base_window::processWindowTick()
 		if(graphicsStation!=nullptr)
 			graphicsStation->showFrame();
 		
-		Sleep(10);
+		Sleep(1);
 }
 
 void base_window::clearWindowList()
@@ -331,6 +354,7 @@ void base_window::setSize(int width, int height)
 			, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_DRAWFRAME
 		);
 	}
+	
 }
 
 void base_window::setTitle(const char* newTitle)

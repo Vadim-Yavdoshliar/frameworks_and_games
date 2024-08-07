@@ -62,9 +62,9 @@ public:
 	Coordinate getMouseCoordinate();
 
 	int getScrollDelta();
-
 	void processKeyMessage(UINT, LPARAM, WPARAM);
 	void reviewKeys();
+
 };
 
 
