@@ -24,15 +24,6 @@ public:
 	};
 
 protected:
-
-	struct Key {
-
-		mutable keyState state = none;
-		int virtualKeyValue;
-
-	};
-
-protected:
 	/// <summary>
 	/// X and y coordinate
 	/// </summary>
@@ -41,27 +32,41 @@ protected:
 		int y;
 	};
 
+protected:
+
+	struct Key {
+
+		mutable keyState state = none;
+		int virtualKeyValue;
+		Coordinate keyCoordinate;
+	};
+
 private:
-	Key currentKey;
-	Coordinate mouseCoor;
+	Key rightKey;
+	Key leftKey;
+	Key middleKey;
+	Key sideKey;
+	
+private:
+	int scrollDelta = 0;
 
 public:
 
 	WinMouse();
 
-	/// <summary>
-    /// Returns key state
-    /// </summary>
-    /// <returns></returns>
-	keyState getState();
+	keyState getRightKeyState();
+	keyState getLeftKeyState();
+	keyState getMiddleKeyState();
+	keyState getSideKeyState();
 
-	void clearKey();
+	Coordinate getRightKeyCoordinate();
+	Coordinate getLeftKeyCoordinate();
+	Coordinate getMiddleKeyCoordinate();
+	Coordinate getSideKeyCoordinate();
 
- 	/// <summary>
-    /// Returns mouse click coordinate
-    /// </summary>
-    /// <returns></returns>
-	Coordinate getCoordinate();
+	int getScrollDelta();
+
+
 	void processKeyMessage(UINT, LPARAM, WPARAM);
 	void reviewKeys();
 

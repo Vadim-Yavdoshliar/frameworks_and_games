@@ -12,9 +12,10 @@
 void WINAPI base_window::defBaseWindowProc
 (base_window& win,UINT& msg, WPARAM wParam, LPARAM lParam)
 {
+
 	
 	win.mainKeyboard.processKeyMessage(msg, lParam, wParam);
-	
+	win.mainMouse.processKeyMessage(msg, lParam, wParam);
 	 
 		switch (win.mainKeyboard.getState()) {
 		case WinKeyboard::Pressed:
@@ -32,26 +33,7 @@ void WINAPI base_window::defBaseWindowProc
 			if (win.windowName != "None") win.setTitle("None");
 			break;
 		}
-
-	
-
-
-	//if (win.mainMouse.getState() != WinMouse::none) {
-	//	switch (win.mainMouse.getState()) {
-	//	case WinMouse::Pressed:
-	//		if (win.windowName != "PressedMouse") win.setTitle("PressedMouse");
-	//		break;
-	//	case WinMouse::Held: //TODO
-	//		if (win.windowName != "HeldMouse") win.setTitle("HeldMouse");
-	//		break;
-	//	case WinMouse::Released:
-	//		if (win.windowName != "ReleasedMouse") win.setTitle("ReleasedMouse");
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
-
+		//win.mainMouse.reviewKeys();
 }
 
 LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
@@ -76,10 +58,12 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 		base_window* windowInst = reinterpret_cast<base_window*>(GetWindowLongPtrA(hWnd, GWLP_USERDATA));
 		if (windowInst != nullptr) {
 			//windowInst->mainKeyboard.processKeyMessage(Msg, lParam, wParam);
-		//	windowInst->mainMouse.processKeyMessage(Msg, lParam, wParam);
+			
 			windowInst->customWinProc(*windowInst, Msg, wParam, lParam);
+
 			//windowInst->mainKeyboard.reviewKeys();
-			//windowInst->mainMouse.reviewKeys();
+			
+
 		}
 	}
 	
@@ -339,7 +323,8 @@ void base_window::setSize(int width, int height)
 void base_window::setTitle(const char* newTitle)
 {
 	windowName = newTitle;
-	SetWindowTextA(mainWindow, windowName.c_str());
+	BOOL res = SetWindowTextA(mainWindow, windowName.c_str());
+	if (res == 0) OutputDebugStringA("BIMBA WITH MOUSE");
 }
 
 void base_window::destroy()

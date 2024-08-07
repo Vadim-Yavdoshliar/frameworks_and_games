@@ -80,6 +80,7 @@ class MyGame : public gAPP {
 	void mouseKeyReleased(mouseKey) override {}
 	void gKeyHeld(gKey) override {}
 	void mouseKeyHeld(mouseKey) override {}
+	void mousePosition(int x, int y) override {}
 };
 
 _MAIN_DECL_{
