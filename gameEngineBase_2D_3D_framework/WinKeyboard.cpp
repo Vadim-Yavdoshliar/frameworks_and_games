@@ -14,6 +14,7 @@ WinKeyboard::WinKeyboard() : keyBuffer(256)
 
 void WinKeyboard::setKey(int vk_code)
 {
+	
 	if (vk_code == -1) {
 		currentKey = Key();
 		return;
@@ -26,6 +27,12 @@ void WinKeyboard::setKey(int vk_code)
 WinKeyboard::keyState WinKeyboard::getState()
 {
 	return currentKey.state;
+}
+
+void WinKeyboard::clearKey()
+{
+	keyBuffer[currentKey.virtualKeyValue - 1].state = WinKeyboard::none;
+	currentKey.state = WinKeyboard::none;
 }
 
 
@@ -41,7 +48,7 @@ void WinKeyboard::processKeyMessage
 			
 			keyBuffer[(size_t)wParam - 1].state = WinKeyboard::Held;
 		}
-		else {
+		else if (keyBuffer[(size_t)wParam - 1].state != WinKeyboard::Held) {
 			keyBuffer[(size_t)wParam - 1] = enteredKey;
 		}
 	}
@@ -49,18 +56,14 @@ void WinKeyboard::processKeyMessage
 	{
 	    enteredKey.state = Released;
 		keyBuffer[(size_t)wParam - 1] = enteredKey;
+		if (keyBuffer[(size_t)wParam - 1].virtualKeyValue == currentKey.virtualKeyValue) {
+			currentKey = keyBuffer[(size_t)wParam - 1];
+		}
 	}
 
 	
 }
 
-void WinKeyboard::reviewKeys()
-{
-	for (auto& rkey : keyBuffer) {
-		rkey.state = (rkey.state == Pressed) ? Held : rkey.state;
-		rkey.state = (rkey.state == Released) ? none : rkey.state;
-	}
-}
 
 
 // --------------------------------**

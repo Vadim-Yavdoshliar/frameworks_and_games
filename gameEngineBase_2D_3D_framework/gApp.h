@@ -15,6 +15,8 @@ protected:
 	const char* gName = "My new game";
 	int width = 500, height = 500;
 
+public:
+
 	enum gKey {
 		ForwardKey,
 		BackwardKey,
@@ -53,6 +55,8 @@ public:
 
 	virtual void gKeyHeld(gKey) = 0;
 	virtual void mouseKeyHeld(mouseKey) = 0;
+
+	virtual void mousePosition(int x, int y) = 0;
 
 	static int run(gAPP*);
 

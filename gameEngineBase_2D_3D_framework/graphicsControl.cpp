@@ -40,6 +40,7 @@ graphicsControl::graphicsControl(base_window* winInst)
 				&ppContext
 			);
      
+		
 	}
 }
 

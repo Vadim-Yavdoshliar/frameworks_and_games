@@ -6,6 +6,7 @@
 
 
 #include "WinKeyboard.h"
+#include "WinMouse.h"
 #include "graphicsControl.h"
 
 #define WindowProcedureFunction(name) void WINAPI name(base_window& win ,UINT& msg, WPARAM wp, LPARAM lp)
@@ -49,6 +50,7 @@ private:
 public:
 
 	WinKeyboard mainKeyboard;
+	WinMouse mainMouse;
 
 	base_window(
 		const char*, 

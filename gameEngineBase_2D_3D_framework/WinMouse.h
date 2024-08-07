@@ -1,7 +1,14 @@
 
+#ifndef GET_X_LPARAM
+#define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
+#endif
 
+#ifndef GET_Y_LPARAM
+#define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))
+#endif
 #ifndef _MOUSE_
 #define _MOUSE_
+
 
 #include "_conditions.h"
 
@@ -17,29 +24,47 @@ public:
 	};
 
 protected:
+	/// <summary>
+	/// X and y coordinate
+	/// </summary>
+	struct Coordinate {
+		int x;
+		int y;
+	};
+
+protected:
 
 	struct Key {
 
 		mutable keyState state = none;
-
 		int virtualKeyValue;
-
 	};
 
 private:
-
-	std::vector<WinMouse::Key> keyBuffer;
-	Key currentKey;
+	Key rightKey;
+	Key leftKey;
+	Key middleKey;
+	Key sideKey;
+	
+private:
+	int scrollDelta = 0;
+	Coordinate keyCoordinate;
 
 public:
 
 	WinMouse();
 
-	void setKey(int vk_code);
-	keyState getState();
+	keyState getRightKeyState();
+	keyState getLeftKeyState();
+	keyState getMiddleKeyState();
+	keyState getSideKeyState();
 
+	Coordinate getMouseCoordinate();
+
+	int getScrollDelta();
 	void processKeyMessage(UINT, LPARAM, WPARAM);
 	void reviewKeys();
+
 };
 
 
