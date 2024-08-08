@@ -1,5 +1,21 @@
 #include "graphicsControl.h"
 #include "windowSystem.h"
+COM::ComPtr<ID3D11Device> graphicsControl::getDevice()
+{
+	return ppDevice;
+}
+COM::ComPtr<ID3D11DeviceContext> graphicsControl::getControl()
+{
+	return ppContext;
+}
+COM::ComPtr<IDXGISwapChain> graphicsControl::getppSwapChain()
+{
+	return ppSwapChain;
+}
+COM::ComPtr<ID3D11RenderTargetView> graphicsControl::getTargetView()
+{
+	return targetView;
+}
 graphicsControl::graphicsControl(base_window* winInst)
 {
 	gWindow = winInst;

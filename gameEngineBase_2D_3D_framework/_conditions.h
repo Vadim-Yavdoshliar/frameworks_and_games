@@ -16,6 +16,9 @@
 #include <d3d11.h>
 #pragma comment (lib,"d3d11")
 #include <wrl.h>
+class base_window;
+
+static base_window* gameWindow = nullptr;
 //#include <WICTextureLoader.h>
 
 namespace COM = Microsoft::WRL;

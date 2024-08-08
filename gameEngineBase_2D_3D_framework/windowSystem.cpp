@@ -13,66 +13,8 @@ void WINAPI base_window::defBaseWindowProc
 (base_window& win,UINT& msg, WPARAM wParam, LPARAM lParam)
 {
 
-	//keyboard test
-	win.mainKeyboard.setKey(0x57);
-	if (win.mainKeyboard.getState() != WinKeyboard::none) {
-
-		switch (win.mainKeyboard.getState()) {
-		case WinKeyboard::Pressed:
-			if (win.windowName != "Pressed") win.setTitle("Pressed");
-			break;
-		case WinKeyboard::Held:
-			if (win.windowName != "Held") win.setTitle("Held");
-			break;
-		case WinKeyboard::Released:
-			if (win.windowName != "Released") {
-				win.setTitle("Released");
-			}
-			break;
-		default:
-			if (win.windowName != "None") win.setTitle("None");
-			break;
-		}
-	}
-
-
-	//mouse test
-	/*if (win.mainMouse.getLeftKeyState() != WinMouse::none) {
-		switch (win.mainMouse.getLeftKeyState()) {
-		case WinMouse::Pressed:
-			if (win.windowName != "PressedMouse") win.setTitle("PressedMouse");
-			break;
-		case WinMouse::Held:
-			if (win.windowName != "HeldMouse") win.setTitle("HeldMouse");
-			break;
-		case WinMouse::Released:
-			if (win.windowName != "ReleasedMouse") win.setTitle("ReleasedMouse");
-			break;
-		default:
-			break;
-		}
-	}*/
-
-
-
-	
-
-
-	//if (win.mainMouse.getState() != WinMouse::none) {
-	//	switch (win.mainMouse.getState()) {
-	//	case WinMouse::Pressed:
-	//		if (win.windowName != "PressedMouse") win.setTitle("PressedMouse");
-	//		break;
-	//	case WinMouse::Held: //TODO
-	//		if (win.windowName != "HeldMouse") win.setTitle("HeldMouse");
-	//		break;
-	//	case WinMouse::Released:
-	//		if (win.windowName != "ReleasedMouse") win.setTitle("ReleasedMouse");
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//}
+	win.mainMouse.processKeyMessage(msg, lParam, wParam);
+	win.mainKeyboard.processKeyMessage(msg, lParam, wParam);
 
 }
 
@@ -97,10 +39,9 @@ LRESULT WINAPI base_window::baseWindowProc(HWND hWnd, UINT Msg, WPARAM wParam, L
 			--countOfFilledWindows;
 		base_window* windowInst = reinterpret_cast<base_window*>(GetWindowLongPtrA(hWnd, GWLP_USERDATA));
 		if (windowInst != nullptr) {
-			windowInst->mainKeyboard.processKeyMessage(Msg, lParam, wParam);
-			windowInst->mainMouse.processKeyMessage(Msg, lParam, wParam);
+			
 			windowInst->customWinProc(*windowInst, Msg, wParam, lParam);
-			windowInst->mainMouse.reviewKeys();;;
+			
 		}
 	}
 	

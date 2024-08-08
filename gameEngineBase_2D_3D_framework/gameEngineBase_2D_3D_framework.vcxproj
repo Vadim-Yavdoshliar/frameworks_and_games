@@ -20,8 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gApp.h" />
+    <ClInclude Include="GDI_picture_loader.h" />
     <ClInclude Include="graphicsControl.h" />
     <ClInclude Include="graphicsException.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="windowSystem.h" />
     <ClInclude Include="WinKeyboard.h" />
     <ClInclude Include="WinMouse.h" />
@@ -29,9 +31,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connector.cpp" />
+    <ClCompile Include="GDI_picture_loader.cpp" />
     <ClCompile Include="graphicsControl.cpp" />
     <ClCompile Include="graphicsException.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="windowSystem.cpp" />
     <ClCompile Include="WinKeyboard.cpp" />
     <ClCompile Include="WinMouse.cpp" />

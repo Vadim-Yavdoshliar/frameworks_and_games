@@ -11,6 +11,7 @@
 
 
 #include "_conditions.h"
+#include "gApp.h"
 
 class WinMouse {
 
@@ -67,5 +68,6 @@ public:
 
 };
 
+void processMouse(gAPP*);
 
 #endif

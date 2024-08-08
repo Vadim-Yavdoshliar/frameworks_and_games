@@ -4,6 +4,7 @@
 #define _KEYBOARD_
 
 #include "_conditions.h"
+#include "gApp.h"
 
 // ********************************
 // ------------------------------**
@@ -80,5 +81,7 @@ public:
 	void processKeyMessage(UINT, LPARAM, WPARAM);
 
 };
+
+void processKeyborad(gAPP*);
 
 #endif
