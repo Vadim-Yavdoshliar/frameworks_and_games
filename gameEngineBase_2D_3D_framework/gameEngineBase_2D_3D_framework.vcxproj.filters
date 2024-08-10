@@ -39,7 +39,7 @@
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GDI_picture_loader.h">
+    <ClInclude Include="GDIPlusController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -69,6 +69,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GDI_picture_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GDIPlusController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

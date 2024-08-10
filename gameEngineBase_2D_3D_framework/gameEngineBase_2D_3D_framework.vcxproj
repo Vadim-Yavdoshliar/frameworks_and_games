@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gApp.h" />
-    <ClInclude Include="GDI_picture_loader.h" />
+    <ClInclude Include="GDIPlusController.h" />
     <ClInclude Include="graphicsControl.h" />
     <ClInclude Include="graphicsException.h" />
     <ClInclude Include="Sprite.h" />
@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Connector.cpp" />
+    <ClCompile Include="GDIPlusController.cpp" />
     <ClCompile Include="GDI_picture_loader.cpp" />
     <ClCompile Include="graphicsControl.cpp" />
     <ClCompile Include="graphicsException.cpp" />

@@ -1,5 +1,6 @@
 #include "graphicsControl.h"
 #include "windowSystem.h"
+
 COM::ComPtr<ID3D11Device> graphicsControl::getDevice()
 {
 	return ppDevice;
@@ -65,7 +66,9 @@ graphicsControl::~graphicsControl()
 	
 }
 
+
 void graphicsControl::showFrame()
 {
+
 	ppSwapChain->Present(1u, 0);
 }

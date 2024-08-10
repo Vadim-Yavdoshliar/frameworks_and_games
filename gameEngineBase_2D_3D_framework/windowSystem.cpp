@@ -9,6 +9,8 @@
 // <START> of the field for custom window PROCEDURES
 // 
 // -------------------------------------------------
+
+base_window* base_window::gameWindow = nullptr;
 void WINAPI base_window::defBaseWindowProc
 (base_window& win,UINT& msg, WPARAM wParam, LPARAM lParam)
 {

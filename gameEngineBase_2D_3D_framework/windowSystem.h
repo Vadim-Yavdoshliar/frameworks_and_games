@@ -14,6 +14,7 @@
 class base_window {
 
 public:
+	static base_window* gameWindow;
 
 	graphicsControl* graphicsStation = nullptr;
 	

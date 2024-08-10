@@ -16,15 +16,15 @@ int gAPP::run(gAPP* mainAPP) {
 
 	base_window gWindow(mainAPP->gName, mainAPP->width, mainAPP->height, -1, -1);
 
-	gameWindow = &gWindow;
+	base_window::gameWindow = &gWindow;
 
 	while (base_window::getCountOfWindows() != 0) {
 		
 		mainAPP->tick();
 
-		drawTextureTest();
+		//drawTextureTest();
 
-		processMouse(mainAPP);
+		processMouse(&gWindow);
 		processKeyborad(mainAPP);
 
 		

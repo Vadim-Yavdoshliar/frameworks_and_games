@@ -64,6 +64,10 @@ void WinKeyboard::processKeyMessage
 	
 }
 
+void processKeyborad(gAPP*) {
+
+}
+
 
 
 // --------------------------------**
