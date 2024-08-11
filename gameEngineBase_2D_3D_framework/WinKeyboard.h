@@ -4,6 +4,7 @@
 #define _KEYBOARD_
 
 #include "_conditions.h"
+#include "gApp.h"
 
 // ********************************
 // ------------------------------**
@@ -47,18 +48,14 @@ class WinKeyboard {
 
 public:
 
-	enum keyState {
-		Pressed,
-		Held,
-		Released,
-		none
-	};
 
 protected:
 
 	struct Key {
 
-		mutable keyState state = none;
+		bool Pressed = 0;
+		bool Released = 0;
+		bool preventPress = 0;
 
 		int virtualKeyValue;
 
@@ -67,18 +64,29 @@ protected:
 private:
 	
 	std::vector<WinKeyboard::Key> keyBuffer;
-	Key currentKey;
+	Key* currentKey = nullptr;
+	std::string textStream;
+	bool textStreamOpened = 0;
+
+	bool charScanned = 0;
 
 public:
+
+	void openStream();
+	std::string closeStream();
+	bool isStreamOpened() { return textStreamOpened; }
+	int getLastFromStream();
 
 	WinKeyboard();
 
 	void setKey(int vk_code);
-	keyState getState();
-	void clearKey();
+	bool isPressed();
+	bool isReleased();
 	
 	void processKeyMessage(UINT, LPARAM, WPARAM);
 
 };
+
+void processKeyborad(gAPP*);
 
 #endif

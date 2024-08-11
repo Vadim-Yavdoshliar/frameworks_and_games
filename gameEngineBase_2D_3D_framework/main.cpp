@@ -68,19 +68,49 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 
 #ifdef _gAPP_test_
 
+//#define _STREAMING_TEST_
+
 #include "gApp.h"
+#include <string>
 
 class MyGame : public gAPP {
-
-	void init() override {}
+	int counter = 0;
+	void initFrameworkResources() override{}
+	void init() override {
+		openTextStream();
+	}
 	void tick() override {}
-	void gKeyPressed(gKey) override {}
+
+	void gKeyPressed(gKey k) override { 
+		
+
+		char t = k;
+		OutputDebugStringA("Pressed : ");
+		OutputDebugStringA(std::to_string((int)k).c_str());
+		OutputDebugStringA("\n");
+
+	}
+
 	void mouseKeyPressed(mouseKey) override {}
-	void gKeyReleased(gKey) override {}
+	void gKeyReleased(gKey k) override {
+
+		OutputDebugStringA("Released : ");
+		OutputDebugStringA(std::to_string((int)k).c_str());
+		OutputDebugStringA("\n\n");
+
+	}
 	void mouseKeyReleased(mouseKey) override {}
-	void gKeyHeld(gKey) override {}
-	void mouseKeyHeld(mouseKey) override {}
-	void mousePosition(int x, int y) override {}
+	void mousePosition(int x,int y) override {}
+	void charInput(char symbol) {
+#ifdef _STREAMING_TEST_
+		OutputDebugStringA((std::string() + symbol).c_str());
+		++counter;
+		if (counter == 10) {
+			OutputDebugStringA("\n\n");
+			OutputDebugStringA(closeTextStream().c_str());
+		}
+#endif
+	}
 };
 
 _MAIN_DECL_{

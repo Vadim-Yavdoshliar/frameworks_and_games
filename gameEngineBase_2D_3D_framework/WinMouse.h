@@ -11,15 +11,23 @@
 
 
 #include "_conditions.h"
+#include "gApp.h"
 
 class WinMouse {
 
 public:
 
 	enum keyState {
-		Pressed,
-		Held,
-		Released,
+		LPressed,
+		LReleased,
+		RPressed,
+		RReleased,
+		MPressed,
+		MReleased,
+		SidePressed,
+		SideReleased,
+		WheelUp,
+		WheelDown,
 		none
 	};
 
@@ -31,46 +39,49 @@ protected:
 		int x;
 		int y;
 	};
-
-protected:
-
-	struct Key {
-
-		mutable keyState state = none;
-		int virtualKeyValue;
-		Coordinate keyCoordinate;
-	};
-
-private:
-	Key rightKey;
-	Key leftKey;
-	Key middleKey;
-	Key sideKey;
 	
 private:
+	int MAXBUFFERSIZE = 50;
+	std::queue<keyState> buffer;
 	int scrollDelta = 0;
+	Coordinate mouseCoordinate;
+
+public:
+	bool mouseIsAvailable = true;
 
 public:
 
 	WinMouse();
 
-	keyState getRightKeyState();
-	keyState getLeftKeyState();
-	keyState getMiddleKeyState();
-	keyState getSideKeyState();
+	Coordinate getMouseCoordinate();
+	int getXmouseCoordinate();
+	int getYmouseCoordinate();
 
-	Coordinate getRightKeyCoordinate();
-	Coordinate getLeftKeyCoordinate();
-	Coordinate getMiddleKeyCoordinate();
-	Coordinate getSideKeyCoordinate();
+	bool isLButtonPressed();
+	bool isLButtonReleased();
 
-	int getScrollDelta();
+	bool isRButtonPressed();
+	bool isRButtonReleased();
 
+	bool isSideButtonPressed();
+	bool isSideButtonReleased();
+
+	bool isMButtonPressed();
+	bool isMButtonReleased();
+
+	bool isWheelUp();
+	bool isWheelDown();
 
 	void processKeyMessage(UINT, LPARAM, WPARAM);
-	void reviewKeys();
 
+
+private:
+	void clearBuffer();
+	void OnPressed(keyState key);
+	void OnReleased(keyState key);
+	void IfBufferIsFool();
 };
 
+void processMouse(base_window*);
 
 #endif

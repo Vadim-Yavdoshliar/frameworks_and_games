@@ -11,9 +11,13 @@
 
 #define WindowProcedureFunction(name) void WINAPI name(base_window& win ,UINT& msg, WPARAM wp, LPARAM lp)
 
+
+void drawTextureTest();
+
 class base_window {
 
 public:
+	static base_window* gameWindow;
 
 	graphicsControl* graphicsStation = nullptr;
 	
