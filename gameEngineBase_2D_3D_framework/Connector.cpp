@@ -13,6 +13,8 @@ std::string gAPP::closeTextStream()
 	return base_window::gameWindow->mainKeyboard.closeStream();
 }
 
+
+
 int gAPP::run(gAPP* mainAPP) {
 
 	
@@ -26,31 +28,38 @@ int gAPP::run(gAPP* mainAPP) {
 
 	base_window::gameWindow = &gWindow;
 
+	initSpriteCreation();
+
+	Sprite* s = createSprite("chest_with_tongue_pixels.png");
+
 	mainAPP->init();
 
 	//initPicture();
-
+	
 	while (base_window::getCountOfWindows() != 0) {
 		
+		gw_object->graphicsStation->startFrame();
+
 		mainAPP->tick();
 
 		//drawTextureTest();
-
+		drawSprite(s, 0, 0);
 		processMouse(&gWindow);
 		processKeyborad(mainAPP);
-
+		
 		
 		gWindow.processWindowTick();
 
-
+		gw_object->graphicsStation->showFrame();
 	}
 
+	delete s;
 	delete mainAPP;
 
 	return 0;
 	}
 	catch (std::exception& error) { OutputDebugStringA(error.what()); }
-	catch (...) { OutputDebugStringA("Something went badly wrong"); }
+	catch (...) { OutputDebugStringA("\n\n\n\nSomething went badly wrong\n\n\n\n"); }
 
 #endif
 

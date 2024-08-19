@@ -13,18 +13,18 @@
 class Sprite;
 
 Sprite* createSprite(const char*);
-void getSpriteSize(int& x, int& y);
-void drawSprite(Sprite*);
-void resizeSprite(Sprite*,int width,int heith);
+void getSpriteSize(Sprite*,int& width, int& height);
+void setSpriteSize(Sprite*,int width,int height);
+void getSptitePosition(Sprite*,int& x,int& y);
+void drawSprite(Sprite*,int x,int y);
 void rotateSprite(Sprite*);
-void replaceSprite(Sprite*);
 
 class gAPP {
 
 protected:
 
 	const char* gName = "My new game";
-	int width = 500, height = 500;
+	int width = 800, height = 700;
 
 public:
 

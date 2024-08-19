@@ -84,19 +84,19 @@ class MyGame : public gAPP {
 	void gKeyPressed(gKey k) override { 
 		
 
-		char t = k;
+	/*	char t = k;
 		OutputDebugStringA("Pressed : ");
 		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n");
+		OutputDebugStringA("\n");*/
 
 	}
 
 	void mouseKeyPressed(mouseKey) override {}
 	void gKeyReleased(gKey k) override {
 
-		OutputDebugStringA("Released : ");
+	/*	OutputDebugStringA("Released : ");
 		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n\n");
+		OutputDebugStringA("\n\n");*/
 
 	}
 	void mouseKeyReleased(mouseKey) override {}

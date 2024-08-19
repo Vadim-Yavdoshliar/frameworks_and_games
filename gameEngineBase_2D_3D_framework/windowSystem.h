@@ -11,8 +11,13 @@
 
 #define WindowProcedureFunction(name) void WINAPI name(base_window& win ,UINT& msg, WPARAM wp, LPARAM lp)
 
+#define gw_device base_window::gameWindow->graphicsStation->getDevice()
+#define gw_context base_window::gameWindow->graphicsStation->getControl()
+#define gw_object base_window::gameWindow
 
 void drawTextureTest();
+
+void initSpriteCreation();
 
 class base_window {
 

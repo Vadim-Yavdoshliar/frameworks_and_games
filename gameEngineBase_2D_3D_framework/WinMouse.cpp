@@ -123,6 +123,7 @@ bool WinMouse::isWheelDown() {
 
 void WinMouse::processKeyMessage(UINT msg, LPARAM lParam, WPARAM wParam) {
     if (mouseIsAvailable) {
+        
         switch (msg)
         {
         case WM_LBUTTONDOWN:
