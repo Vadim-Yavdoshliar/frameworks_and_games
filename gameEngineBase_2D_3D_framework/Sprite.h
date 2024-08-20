@@ -10,12 +10,14 @@ COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath);
 float getRelPos(float spriteValue,float windowValue);
 
 
-// drawSprite(spt, 23, 45);
-
 class Sprite
 {
 
+	static bool initDone;
+
 	COM::ComPtr<ID3D11Texture2D> SpriteTexture;
+
+	COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
 
 	COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
 
@@ -53,7 +55,7 @@ public:
 	static COM::ComPtr<ID3D11VertexShader> getSpritePixelShader();
 };
 
-int posX = 0, posY = 0;
+
 
 int width, height;
 
@@ -62,7 +64,9 @@ struct corner {
 	float y;
 };
 
-corner spriteRectangle[3];
+corner spriteRectangle[4];
+
+
 
 public:
 

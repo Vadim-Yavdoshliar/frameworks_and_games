@@ -14,6 +14,8 @@ Sprite::SpriteVertexShader Sprite::SpriteVertexShader::initialUnit;
 
 Sprite::SpritePixelShader Sprite::SpritePixelShader::initialUnit;
 
+bool Sprite::initDone = 0;
+
 float getRelPos(float spriteValue, float windowValue)
 {
 	return ((2 * spriteValue) / windowValue) - 1;
@@ -53,6 +55,19 @@ Sprite::Sprite(const char* fileName)
 			base_window::gameWindow->getHeight()
 		)
 	};
+	spriteRectangle[3] = {
+		getRelPos
+		(
+			width,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			height,
+			base_window::gameWindow->getHeight()
+		)
+	};
+
 
 	D3D11_BUFFER_DESC buffer_desc = {};
 	buffer_desc.ByteWidth = sizeof(spriteRectangle);
@@ -86,7 +101,29 @@ Sprite::Sprite(const char* fileName)
 	}
 	else myEXC("Vertex BUFFER creation issue")
 
-		
+		D3D11_SHADER_RESOURCE_VIEW_DESC textureDesc = {};
+
+	textureDesc.Format = spriteTextureDesciption.Format;
+	textureDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	textureDesc.Texture2D.MostDetailedMip = 0;
+	textureDesc.Texture2D.MipLevels = 1;
+
+	hr = gw_device->CreateShaderResourceView(
+		SpriteTexture.Get(),
+		&textureDesc,
+		&drawableTexture
+	);
+	
+
+	if (FAILED(hr)) myEXC("Problem with shader resource view creation")
+
+
+		gw_context->PSSetShaderResources(
+			0,
+			1,
+			drawableTexture.GetAddressOf());
+
+
 }
 
 
@@ -150,7 +187,8 @@ void Sprite::SpritePixelShader::initPixelShader() {
 
 void Sprite::initShaders()
 {
-	
+	if (initDone != 0) return;
+
 	Sprite::SpriteVertexShader::initVertexShader();
 	Sprite::SpritePixelShader::initPixelShader();
 
@@ -158,23 +196,38 @@ void Sprite::initShaders()
 
 void Sprite::initLayout()
 {
+	if (initDone != 0) return;
 	HRESULT hr;
 	COM::ComPtr<ID3D11InputLayout> vertexInputLayout;
-	D3D11_INPUT_ELEMENT_DESC vertexInputDecs;
-	vertexInputDecs.SemanticName = "POSITION";
-	vertexInputDecs.SemanticIndex = 0;
-	vertexInputDecs.Format = DXGI_FORMAT_R32G32_FLOAT;
-	vertexInputDecs.InputSlot = 0;
-	vertexInputDecs.AlignedByteOffset = 0;
-	vertexInputDecs.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	vertexInputDecs.InstanceDataStepRate = 0;
 
+	D3D11_INPUT_ELEMENT_DESC vertexPosInputDecs = {};
+	vertexPosInputDecs.SemanticName = "POSITION";
+	vertexPosInputDecs.SemanticIndex = 0;
+	vertexPosInputDecs.Format = DXGI_FORMAT_R32G32_FLOAT;
+	vertexPosInputDecs.InputSlot = 0;
+	vertexPosInputDecs.AlignedByteOffset = 0;
+	vertexPosInputDecs.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	vertexPosInputDecs.InstanceDataStepRate = 0;
+
+	D3D11_INPUT_ELEMENT_DESC vertexTexInputDecs = {};
+	vertexTexInputDecs.SemanticName = "SPRITETEXTURE";
+	vertexTexInputDecs.SemanticIndex = 0;
+	vertexTexInputDecs.Format = DXGI_FORMAT_R32G32_FLOAT;
+	vertexTexInputDecs.InputSlot = 0;
+	vertexTexInputDecs.AlignedByteOffset = 0;
+	vertexTexInputDecs.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	vertexTexInputDecs.InstanceDataStepRate = 0;
+
+	D3D11_INPUT_ELEMENT_DESC layoutDecsList[] = 
+	{ vertexPosInputDecs ,vertexTexInputDecs };
+
+	int layoutCount = std::size(layoutDecsList);
 
 	COM::ComPtr<ID3D11InputLayout> t_layout;
 
 	hr = gw_device->CreateInputLayout(
-		&vertexInputDecs,
-		(UINT)1,
+		layoutDecsList,
+		layoutCount,
 		Sprite::SpriteVertexShader::getVertexShaderBinary()->GetBufferPointer(),
 		Sprite::SpriteVertexShader::getVertexShaderBinary()->GetBufferSize(),
 		&t_layout
@@ -187,12 +240,14 @@ void Sprite::initLayout()
 	gw_context->IASetInputLayout(
 		t_layout.Get());
 
-	//gw_object->graphicsStation->getVertexInputLayout().Get() = t_layout.Get();
-	//int a = 5;
+
+	gw_object->graphicsStation->getVertexInputLayout() = t_layout;
+
+	initDone = 1;
 }
 
 
 void Sprite::draw()
 {
-	gw_context->Draw(3,0);
+	gw_context->Draw(4,0);
 }

@@ -20,6 +20,7 @@ int gAPP::run(gAPP* mainAPP) {
 	
 
 #ifdef _DEBUG_INFO_
+
 	try {
 
 	mainAPP->initFrameworkResources();
@@ -35,6 +36,9 @@ int gAPP::run(gAPP* mainAPP) {
 	mainAPP->init();
 
 	//initPicture();
+
+	clock_t start = clock();
+
 	
 	while (base_window::getCountOfWindows() != 0) {
 		
@@ -43,6 +47,7 @@ int gAPP::run(gAPP* mainAPP) {
 		mainAPP->tick();
 
 		//drawTextureTest();
+		
 		drawSprite(s, 0, 0);
 		processMouse(&gWindow);
 		processKeyborad(mainAPP);

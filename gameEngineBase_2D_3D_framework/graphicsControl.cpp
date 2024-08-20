@@ -9,7 +9,7 @@ COM::ComPtr<ID3D11DeviceContext> graphicsControl::getControl()
 {
 	return ppContext;
 }
-COM::ComPtr<ID3D11InputLayout> graphicsControl::getVertexInputLayout()
+COM::ComPtr<ID3D11InputLayout>& graphicsControl::getVertexInputLayout()
 {
 	return vertexInputLayout;
 }
@@ -77,7 +77,7 @@ graphicsControl::graphicsControl(base_window* winInst)
 				nullptr,
 				&backBuffer
 			);
-
+	
 		if (FAILED(hr))	myEXC("problem with back buffer target creating")
 
 			ppContext->OMSetRenderTargets(
@@ -85,7 +85,7 @@ graphicsControl::graphicsControl(base_window* winInst)
 			backBuffer.GetAddressOf(),
 				nullptr);
 
-		ppContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		ppContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
 
 		D3D11_VIEWPORT vp;
@@ -98,8 +98,25 @@ graphicsControl::graphicsControl(base_window* winInst)
 
 		ppContext->RSSetViewports(1, &vp);
 
+		D3D11_SAMPLER_DESC samplerDesc = {};
 
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 
+		hr = ppDevice->CreateSamplerState(
+			&samplerDesc,
+			&sampler);
+
+		if (FAILED(hr)) {
+			myEXC("sampler creation issue")
+		}
+
+		ppContext->PSSetSamplers(
+			0, 
+			1, 
+			sampler.GetAddressOf());
 	}
 }
 

@@ -19,11 +19,12 @@ protected:
 	COM::ComPtr<ID3D11Texture2D> backBufferTexture;
 	COM::ComPtr<ID3D11RenderTargetView> backBuffer;
 	COM::ComPtr<ID3D11InputLayout> vertexInputLayout;
+	COM::ComPtr<ID3D11SamplerState> sampler;
 	base_window* gWindow = nullptr;
 
 public:
 
-	COM::ComPtr<ID3D11InputLayout> getVertexInputLayout();
+	COM::ComPtr<ID3D11InputLayout>& getVertexInputLayout();
 	COM::ComPtr<ID3D11Device> getDevice();
 	COM::ComPtr<ID3D11DeviceContext> getControl();
 	COM::ComPtr<IDXGISwapChain> getppSwapChain();
