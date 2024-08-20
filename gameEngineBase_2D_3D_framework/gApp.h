@@ -43,8 +43,17 @@ public:
 	};
 
 	enum mouseKey {
-		Left,
-		Right
+		LPressed,
+		LReleased,
+		RPressed,
+		RReleased,
+		MPressed,
+		MReleased,
+		SidePressed,
+		SideReleased,
+		WheelUp,
+		WheelDown,
+		none
 	};
 
 public:

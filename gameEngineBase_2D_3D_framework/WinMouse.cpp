@@ -1,5 +1,5 @@
-//#include "WinMouse.h"
 #include "windowSystem.h"
+//#define _INPUT_TEST_
 
 WinMouse::WinMouse() {
 
@@ -205,62 +205,101 @@ void WinMouse::processKeyMessage(UINT msg, LPARAM lParam, WPARAM wParam) {
     }
 }
 
-void processMouse(base_window* win) {
-    if (win->mainMouse.isLButtonPressed()) {
-        if (win->getName() != "LPressed") {
-            win->setTitle("LPressed");
+void processMouse(gAPP* app) {
+
+#ifdef _INPUT_TEST_
+
+    if (base_window::gameWindow->mainMouse.isLButtonPressed()) {
+        if (base_window::gameWindow->getName() != "LPressed") {
+            base_window::gameWindow->setTitle("LPressed");
         }
     }
-    else if (win->mainMouse.isLButtonReleased()) {
-        if (win->getName() != "LReleased") {
-            win->setTitle("LReleased");
+    else if (base_window::gameWindow->mainMouse.isLButtonReleased()) {
+        if (base_window::gameWindow->getName() != "LReleased") {
+            base_window::gameWindow->setTitle("LReleased");
         }
     }
-    else if (win->mainMouse.isRButtonPressed()) {
-        if (win->getName() != "RPressed") {
-            win->setTitle("RPressed");
+    else if (base_window::gameWindow->mainMouse.isRButtonPressed()) {
+        if (base_window::gameWindow->getName() != "RPressed") {
+            base_window::gameWindow->setTitle("RPressed");
         }
     }
-    else if (win->mainMouse.isRButtonReleased()) {
-        if (win->getName() != "RReleased") {
-            win->setTitle("RReleased");
+    else if (base_window::gameWindow->mainMouse.isRButtonReleased()) {
+        if (base_window::gameWindow->getName() != "RReleased") {
+            base_window::gameWindow->setTitle("RReleased");
         }
     }
-    else if (win->mainMouse.isMButtonPressed()) {
-        if (win->getName() != "MPressed") {
-            win->setTitle("MPressed");
+    else if (base_window::gameWindow->mainMouse.isMButtonPressed()) {
+        if (base_window::gameWindow->getName() != "MPressed") {
+            base_window::gameWindow->setTitle("MPressed");
         }
     }
-    else if (win->mainMouse.isMButtonReleased()) {
-        if (win->getName() != "MReleased") {
-            win->setTitle("MReleased");
+    else if (base_window::gameWindow->mainMouse.isMButtonReleased()) {
+        if (base_window::gameWindow->getName() != "MReleased") {
+            base_window::gameWindow->setTitle("MReleased");
         }
     }
-    else if (win->mainMouse.isSideButtonPressed()) {
-        if (win->getName() != "SidePressed") {
-            win->setTitle("SidePressed");
+    else if (base_window::gameWindow->mainMouse.isSideButtonPressed()) {
+        if (base_window::gameWindow->getName() != "SidePressed") {
+            base_window::gameWindow->setTitle("SidePressed");
         }
     }
-    else if (win->mainMouse.isSideButtonReleased()) {
-        if (win->getName() != "SideReleased") {
-            win->setTitle("SideReleased");
+    else if (base_window::gameWindow->mainMouse.isSideButtonReleased()) {
+        if (base_window::gameWindow->getName() != "SideReleased") {
+            base_window::gameWindow->setTitle("SideReleased");
         }
     }
-    else if (win->mainMouse.isWheelUp()) {
-        if (win->getName() != "W up") {
-            win->setTitle("W up");
+    else if (base_window::gameWindow->mainMouse.isWheelUp()) {
+        if (base_window::gameWindow->getName() != "W up") {
+            base_window::gameWindow->setTitle("W up");
         }
     }
-    else if (win->mainMouse.isWheelDown()) {
-        if (win->getName() != "W down") {
-            win->setTitle("W down");
+    else if (base_window::gameWindow->mainMouse.isWheelDown()) {
+        if (base_window::gameWindow->getName() != "W down") {
+            base_window::gameWindow->setTitle("W down");
         }
     }
     else {
-        if (win->getName() != "none") {
-            win->setTitle("none");
+        if (base_window::gameWindow->getName() != "none") {
+            base_window::gameWindow->setTitle("none");
         }
     }
+#endif
+
+    if (base_window::gameWindow->mainMouse.isLButtonPressed()) {
+        app->mouseKeyPressed(gAPP::LPressed);
+    }
+    else if (base_window::gameWindow->mainMouse.isLButtonReleased()) {
+        app->mouseKeyPressed(gAPP::LReleased);
+    }
+    else if (base_window::gameWindow->mainMouse.isRButtonPressed()) {
+        app->mouseKeyPressed(gAPP::RPressed);
+    }
+    else if (base_window::gameWindow->mainMouse.isRButtonReleased()) {
+        app->mouseKeyPressed(gAPP::RReleased);
+    }
+    else if (base_window::gameWindow->mainMouse.isMButtonPressed()) {
+        
+    }
+    else if (base_window::gameWindow->mainMouse.isMButtonReleased()) {
+        
+    }
+    else if (base_window::gameWindow->mainMouse.isSideButtonPressed()) {
+        
+    }
+    else if (base_window::gameWindow->mainMouse.isSideButtonReleased()) {
+        
+    }
+    else if (base_window::gameWindow->mainMouse.isWheelUp()) {
+        
+    }
+    else if (base_window::gameWindow->mainMouse.isWheelDown()) {
+        
+    }
+    else {
+        
+    }
+
 }
 
 

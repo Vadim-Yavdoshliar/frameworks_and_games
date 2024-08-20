@@ -19,10 +19,10 @@ COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath)
         for (UINT x = 0; x < width; x++) {
             Color color;
             image.GetPixel(x, y, &color);
-            pixels[(x + y * width) * 4 + 0] = color.GetB();
-            pixels[(x + y * width) * 4 + 1] = color.GetB();
+            pixels[(x + y * width) * 4 + 0] = color.GetR();
+            pixels[(x + y * width) * 4 + 1] = color.GetG();
             pixels[(x + y * width) * 4 + 2] = color.GetB();
-            pixels[(x + y * width) * 4 + 3] = color.GetB();
+            pixels[(x + y * width) * 4 + 3] = color.GetA();
         }
     }
 

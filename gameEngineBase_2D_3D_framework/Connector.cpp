@@ -36,7 +36,7 @@ int gAPP::run(gAPP* mainAPP) {
 
 		//drawTextureTest();
 
-		processMouse(&gWindow);
+		processMouse(mainAPP);
 		processKeyborad(mainAPP);
 
 		
