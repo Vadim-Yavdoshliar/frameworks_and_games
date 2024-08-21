@@ -82,6 +82,6 @@ private:
 	void IfBufferIsFool();
 };
 
-void processMouse(base_window*);
+void processMouse(gAPP*);
 
 #endif

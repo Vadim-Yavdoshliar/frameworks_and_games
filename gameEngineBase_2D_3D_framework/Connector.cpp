@@ -49,7 +49,7 @@ int gAPP::run(gAPP* mainAPP) {
 		//drawTextureTest();
 		
 		drawSprite(s, 0, 0);
-		processMouse(&gWindow);
+		processMouse(mainAPP);
 		processKeyborad(mainAPP);
 		
 		
