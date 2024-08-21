@@ -19,10 +19,10 @@ COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath)
         for (UINT x = 0; x < width; x++) {
             Color color;
             image.GetPixel(x, y, &color);
-            pixels[(x + y * width) * 4 + 0] = color.GetB();
-            pixels[(x + y * width) * 4 + 1] = color.GetB();
+            pixels[(x + y * width) * 4 + 0] = color.GetR();
+            pixels[(x + y * width) * 4 + 1] = color.GetG();
             pixels[(x + y * width) * 4 + 2] = color.GetB();
-            pixels[(x + y * width) * 4 + 3] = color.GetB();
+            pixels[(x + y * width) * 4 + 3] = color.GetA();
         }
     }
 
@@ -48,36 +48,10 @@ COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath)
 	return texture;
 }
 
+
 void drawTextureTest() {
-    /*auto device = base_window::gameWindow->graphicsStation->getDevice();
-    auto context = base_window::gameWindow->graphicsStation->getControl();
-    auto swapChain = base_window::gameWindow->graphicsStation->getppSwapChain();
-    auto targetView = base_window::gameWindow->graphicsStation->getTargetView();
-
-    COM::ComPtr<ID3D11Texture2D> pBackBuffer;
-    swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
     
-    device->CreateRenderTargetView(pBackBuffer.Get(), NULL, targetView.GetAddressOf());
-    pBackBuffer->Release();
-    context->OMSetRenderTargets(1, targetView.GetAddressOf(), NULL);
-
-    float color[] = { 0.5f, 0.9f, 1.0f, 1.0f };
-    context->ClearRenderTargetView(targetView.Get(), color);
-
-    base_window::gameWindow->graphicsStation->showFrame();*/
-    auto device = base_window::gameWindow->graphicsStation->getDevice();
-    auto context = base_window::gameWindow->graphicsStation->getControl();
-    auto swapChain = base_window::gameWindow->graphicsStation->getppSwapChain();
-    auto targetView = base_window::gameWindow->graphicsStation->getTargetView();
-
-    // Step 1: Load the texture
-    COM::ComPtr<ID3D11Texture2D> texture = getPictureTexture("chest_with_tongue_pixels.png");
-    if (!texture) {
-        // Handle error if texture loading fails
-        return;
-    }
-
-    
+  
 }
 
 // additional functions

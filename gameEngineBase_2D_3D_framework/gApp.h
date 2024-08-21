@@ -8,21 +8,23 @@
 
 #define _MAIN_DECL_ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams, int wndStatus)
 
+#include <string>
+
 class Sprite;
 
 Sprite* createSprite(const char*);
-void getSpriteSize(int& x, int& y);
-void drawSprite(Sprite*);
-void resizeSprite(Sprite*,int width,int heith);
+void getSpriteSize(Sprite*,int& width, int& height);
+void setSpriteSize(Sprite*,int width,int height);
+void getSptitePosition(Sprite*,int& x,int& y);
+void drawSprite(Sprite*,int x,int y);
 void rotateSprite(Sprite*);
-void replaceSprite(Sprite*);
 
 class gAPP {
 
 protected:
 
 	const char* gName = "My new game";
-	int width = 500, height = 500;
+	int width = 800, height = 700;
 
 public:
 
@@ -46,7 +48,7 @@ public:
 	};
 
 public:
-
+	virtual void initFrameworkResources() = 0;
 	// Initialisation of all objects you need
 	virtual void init() = 0;
 
@@ -62,12 +64,13 @@ public:
 	virtual void gKeyReleased(gKey) = 0;
 	virtual void mouseKeyReleased(mouseKey) = 0;
 
-	virtual void gKeyHeld(gKey) = 0;
-	virtual void mouseKeyHeld(mouseKey) = 0;
-
 	virtual void mousePosition(int x, int y) = 0;
 
 	static int run(gAPP*);
+
+	void openTextStream();
+	std::string closeTextStream();
+	virtual void charInput(char) = 0;
 
 };
 
