@@ -31,8 +31,7 @@ int gAPP::run(gAPP* mainAPP) {
 
 	initSpriteCreation();
 
-	Sprite* s = createSprite("Screenshot_2.png");
-
+	
 	mainAPP->init();
 
 	//initPicture();
@@ -45,10 +44,7 @@ int gAPP::run(gAPP* mainAPP) {
 		gw_object->graphicsStation->startFrame();
 
 		mainAPP->tick();
-
-		//drawTextureTest();
 		
-		drawSprite(s, 0, 0);
 		processMouse(mainAPP);
 		processKeyborad(mainAPP);
 		
@@ -58,7 +54,7 @@ int gAPP::run(gAPP* mainAPP) {
 		gw_object->graphicsStation->showFrame();
 	}
 
-	delete s;
+
 	delete mainAPP;
 
 	return 0;

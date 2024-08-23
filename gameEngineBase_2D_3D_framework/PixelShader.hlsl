@@ -1,8 +1,14 @@
 
-Texture2D tex;
+Texture2D tex : register(t0);
 SamplerState ss;
 
-float4 main(float2 inCoord : TEXCOORD) : SV_Target
+struct PSIn
 {
-	return tex.Sample(ss,inCoord);
+	float4 vertexPos : SV_POSITION;
+	float2 texPos : TEXCOORD;
+};
+
+float4 main(PSIn data) : SV_Target
+{
+	return tex.Sample(ss,data.texPos);
 }

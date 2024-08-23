@@ -59,8 +59,8 @@ public:
 
 int width, height;
 struct vecXY {
-	float x;
-	float y;
+	float x = 0;
+	float y = 0;
 };
 struct corner {
 	
@@ -68,9 +68,11 @@ struct corner {
 	vecXY UV;
 };
 
+bool onceDrawn = 0;
+
 corner spriteRectangle[4];
 
-
+vecXY spritePosition;
 
 public:
 
@@ -80,7 +82,7 @@ public:
 	virtual void draw();
 	
 	void setSize(int widthV, int heightV);
-	void setPosition(int xv, int yv);
+	void setPosition(int x, int y);
 	void rotate(int angle);
 
 	Sprite(const char*);

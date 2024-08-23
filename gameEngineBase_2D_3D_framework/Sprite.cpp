@@ -4,6 +4,7 @@
 Sprite* createSprite(const char* path) { return new Sprite(path); }
 void getSpriteSize(int& x, int& y) {}
 void drawSprite(Sprite* inst,int x,int y) {
+	inst->setPosition(x, y);
 	inst->draw();
 }
 void resizeSprite(Sprite*, int width, int heith) {}
@@ -13,6 +14,8 @@ void replaceSprite(Sprite*) {}
 Sprite::SpriteVertexShader Sprite::SpriteVertexShader::initialUnit;
 
 Sprite::SpritePixelShader Sprite::SpritePixelShader::initialUnit;
+
+
 
 bool Sprite::initDone = 0;
 
@@ -38,83 +41,18 @@ Sprite::Sprite(const char* fileName)
 
 	D3D11_TEXTURE2D_DESC spriteTextureDesciption;
 	SpriteTexture.Get()->GetDesc(&spriteTextureDesciption);
-
+	
 	width = spriteTextureDesciption.Width;
 	height = spriteTextureDesciption.Height;
 
-
-	spriteRectangle[0] = { { -1,1 },{0,0} };
-	spriteRectangle[1] = {
-		{getRelPos
-		(
-			width,
-			base_window::gameWindow->getWidth()
-		),
-		1},
-		{1,0}
-	};
-	spriteRectangle[2] = {
-		{ -1,
-		-getRelPos
-		(
-			height,
-			base_window::gameWindow->getHeight()
-		)},
-		{0,1}
-	};
-	spriteRectangle[3] = {
-		{getRelPos
-		(
-			width,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			height,
-			base_window::gameWindow->getHeight()
-		)},
-		{1,1}
-	};
-
-
-	D3D11_BUFFER_DESC buffer_desc = {};
-	buffer_desc.ByteWidth = sizeof(spriteRectangle);
-	buffer_desc.StructureByteStride = sizeof(corner);
-	buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	buffer_desc.CPUAccessFlags = 0;
-	buffer_desc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA actualVertexData = {};
-	actualVertexData.pSysMem = spriteRectangle;
-
-	hr = gw_device->CreateBuffer(
-		&buffer_desc,
-		&actualVertexData,
-		&spriteVertexBuffer
-	);
 	
-	if (!FAILED(hr)) {
-
-		UINT step = sizeof(corner);
-		UINT offset = 0;
-
-		gw_context->IASetVertexBuffers(
-			0,
-			1,
-			spriteVertexBuffer.GetAddressOf(),
-			&step,
-			&offset
-		);
-	}
-	else myEXC("Vertex BUFFER creation issue")
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC textureDesc = {};
 
 	textureDesc.Format = spriteTextureDesciption.Format;
 	textureDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	textureDesc.Texture2D.MostDetailedMip = 0;
 	textureDesc.Texture2D.MipLevels = 1;
+	textureDesc.Texture2D.MostDetailedMip = 0;
 
 	hr = gw_device->CreateShaderResourceView(
 		SpriteTexture.Get(),
@@ -123,14 +61,15 @@ Sprite::Sprite(const char* fileName)
 	);
 	
 
-	if (FAILED(hr)) myEXC("Problem with shader resource view creation")
+	if (FAILED(hr)) 
+		myEXC("Problem with shader resource view creation")
 
 
-		gw_context->PSSetShaderResources(
-			0,
-			1,
-			drawableTexture.GetAddressOf());
 
+}
+
+Sprite::~Sprite()
+{
 
 }
 
@@ -193,6 +132,96 @@ void Sprite::SpritePixelShader::initPixelShader() {
 	else myEXC("Pixel shader loading issue")
 }
 
+void Sprite::setPosition(int x, int y)
+{
+	if (onceDrawn) {
+		if (x == spritePosition.x && y == spritePosition.y) {
+			return;
+		}
+	}
+
+	spritePosition.x = x;
+	spritePosition.y = y;
+
+
+	spriteRectangle[0] = { 
+		{getRelPos
+		(
+			x,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			y,
+			base_window::gameWindow->getHeight()
+		)},
+		{0,0} };
+	spriteRectangle[1] = {
+		{getRelPos
+		(
+			x+width,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			y,
+			base_window::gameWindow->getHeight()
+		)},
+		{1,0}
+	};
+	spriteRectangle[2] = {
+		{ getRelPos
+		(
+			x,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			y+height,
+			base_window::gameWindow->getHeight()
+		)},
+		{0,1}
+	};
+	spriteRectangle[3] = {
+		{getRelPos
+		(
+			x+width,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			y+height,
+			base_window::gameWindow->getHeight()
+		)},
+		{1,1}
+	};
+
+
+	D3D11_BUFFER_DESC buffer_desc = {};
+	buffer_desc.ByteWidth = sizeof(spriteRectangle);
+	buffer_desc.StructureByteStride = sizeof(corner);
+	buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+	buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	buffer_desc.CPUAccessFlags = 0;
+	buffer_desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA actualVertexData = {};
+	actualVertexData.pSysMem = spriteRectangle;
+
+	HRESULT hr;
+
+	hr = gw_device->CreateBuffer(
+		&buffer_desc,
+		&actualVertexData,
+		&spriteVertexBuffer
+	);
+
+	if (FAILED(hr))
+		myEXC("Vertex BUFFER creation issue")
+
+		onceDrawn = 1;
+}
+
 void Sprite::initShaders()
 {
 	if (initDone != 0) return;
@@ -226,6 +255,7 @@ void Sprite::initLayout()
 	vertexTexInputDecs.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	vertexTexInputDecs.InstanceDataStepRate = 0;
 
+	
 	D3D11_INPUT_ELEMENT_DESC layoutDecsList[] = 
 	{ vertexPosInputDecs ,vertexTexInputDecs };
 
@@ -257,6 +287,36 @@ void Sprite::initLayout()
 
 void Sprite::draw()
 {
+	UINT step = sizeof(corner);
+	UINT offset = 0;
+
+	gw_context->IASetVertexBuffers(
+		0,
+		1,
+		spriteVertexBuffer.GetAddressOf(),
+		&step,
+		&offset
+	);
+
+	gw_context->PSSetShaderResources(
+		0,
+		1,
+		drawableTexture.GetAddressOf());
+
 	gw_context->Draw(4,0);
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

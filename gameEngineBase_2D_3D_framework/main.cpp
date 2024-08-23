@@ -74,12 +74,20 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 #include <string>
 
 class MyGame : public gAPP {
+	Sprite* s;
+	Sprite* s1;
 	int counter = 0;
 	void initFrameworkResources() override{}
 	void init() override {
-		openTextStream();
+		 s = createSprite("Screenshot_2.png");
+		 s1 = createSprite("chest_with_tongue_pixels.png");
+		//openTextStream();
 	}
-	void tick() override {}
+	void tick() override {
+		
+		drawSprite(s, 0, 0);
+		drawSprite(s1, 300, 100);
+	}
 
 	void gKeyPressed(gKey k) override { 
 		
@@ -111,6 +119,11 @@ class MyGame : public gAPP {
 		}
 #endif
 	}
+	~MyGame() {
+		delete s;
+		delete s1;
+	}
+
 };
 
 _MAIN_DECL_{
