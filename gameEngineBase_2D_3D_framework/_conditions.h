@@ -14,6 +14,7 @@
 
 
 #include <Windows.h>
+#include <list>
 #include <queue>
 #include <vector>
 #include <ctime>

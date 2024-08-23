@@ -11,16 +11,12 @@ float getRelPos(float spriteValue,float windowValue);
 
 class Sprite
 {
+	static std::list<Sprite*>drawableList;
+public:
+	bool drawable = 0;
+private:
 
-
-	static bool initDone;
-
-	COM::ComPtr<ID3D11Texture2D> SpriteTexture;
-
-	COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
-
-	COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
-
+	// SHADERS
 class SpriteVertexShader {
 
 	SpriteVertexShader() = default;
@@ -55,7 +51,16 @@ public:
 	static COM::ComPtr<ID3D11VertexShader> getSpritePixelShader();
 };
 
+	// Shows that general graphics resources are set for sprites drawing
+static bool initDone;
 
+	// MAIN SPRITE DATA
+
+COM::ComPtr<ID3D11Texture2D> SpriteTexture;
+
+COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
+
+COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
 
 int width, height;
 struct vecXY {
@@ -76,6 +81,14 @@ vecXY spritePosition;
 
 public:
 
+	static void drawSprites();
+
+	int getWidth() { return width; }
+	int getHeight() { return height; }
+
+	int getX() { return spritePosition.x; }
+	int getY() { return spritePosition.y; }
+
 	static void initShaders();
 	static void initLayout();
 	static void initBlend();
@@ -89,6 +102,7 @@ public:
 
 	
 	Sprite(const char*);
+	Sprite(Sprite*);
 
 	~Sprite();
 

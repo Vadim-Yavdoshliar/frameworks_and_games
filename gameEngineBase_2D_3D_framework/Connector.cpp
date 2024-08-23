@@ -1,7 +1,7 @@
 
 #include "gApp.h"
 #include "windowSystem.h"
-
+#include "autoDraw.h"
 
 void gAPP::openTextStream()
 {
@@ -27,6 +27,8 @@ int gAPP::run(gAPP* mainAPP) {
 
 	base_window::gameWindow = &gWindow;
 
+	base_window::gameWindowInit = 1;
+
 	initSpriteCreation();
 
 	mainAPP->init();
@@ -40,6 +42,7 @@ int gAPP::run(gAPP* mainAPP) {
 		processMouse(mainAPP);
 		processKeyborad(mainAPP);
 		
+		drawAllStuff();
 		
 		gWindow.processWindowTick();
 

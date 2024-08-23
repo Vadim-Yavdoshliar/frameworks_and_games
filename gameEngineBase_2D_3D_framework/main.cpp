@@ -78,22 +78,38 @@ class MyGame : public gAPP {
 	Sprite* s;
 	Sprite* s1;
 	Sprite* s2;
-	int counter = 0;
-	float a = 0;
+	Sprite* s3;
+
+
 	void initFrameworkResources() override{
 	
 	}
 	void init() override {
-		 s = createSprite("Sprites\\Screenshot_2.png");
-		 s1 = createSprite("Sprites\\chest_with_tongue_pixels.png");
-		 s2 = createSprite("Sprites\\spaceShip.png");
+		s = createSprite("Sprites\\spaceShip.png");
+		s1 = createSprite("Sprites\\chest_with_tongue_pixels.png");
+		s2 = createSprite("Sprites\\Screenshot_2.png");
+		
+		s3 = getSpriteCopy(s1);
+
+		 int v1, v2;
+		 getSpriteSize(s2, v1, v2);
+		 setSpriteSize(s2, v1 / 4, v2 / 4);
+		 getSpriteSize(s1, v1, v2);
+		 setSpriteSize(s1, v1 / 2, v2/2);
+		 setSpriteSize(s, v1 / 2, v2 / 2);
+		 setSpritePosition(s1, 400, 100);
+
+		 setSpritePosition(s,100, 300);
+		 setSpritePosition(s1, 400, 100);
+
+		 makeSpriteVisible(s3, true);
+		 makeSpriteVisible(s2,true);
+		 makeSpriteVisible(s1,true);
+		 makeSpriteVisible(s,true);
 	}
 	void tick() override {
 		
-		drawSprite(s, 0, 0);
-		drawSprite(s1, 300, 100);
-		drawSprite(s2, a, 0);
-		if (a < 500) a += 3;
+
 	}
 	void gKeyPressed(gKey k) override { 
 
@@ -114,6 +130,8 @@ class MyGame : public gAPP {
 	~MyGame() {
 		delete s;
 		delete s1;
+		delete s2;
+		delete s3;
 	}
 };
 

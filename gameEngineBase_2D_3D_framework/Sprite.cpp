@@ -1,15 +1,72 @@
 #include "Sprite.h"
 
+#include "autoDraw.h"
 
 
-Sprite* createSprite(const char* path) { return new Sprite(path); }
-void getSpriteSize(int& x, int& y) {}
-void drawSprite(Sprite* inst,int x,int y) {
-	inst->setPosition(x, y);
-	inst->draw();
+void drawAllStuff() {
+	Sprite::drawSprites();
 }
-void resizeSprite(Sprite*, int width, int heith) {}
+
+Sprite* createSprite(const char* path)
+{	
+	if (base_window::gameWindowInit == 0)
+	{
+		OutputDebugStringA
+		("\n\n\n\n\tSprite creating error : attempt to create sprite before framework initialisation\nReturned : nullptr");
+		return nullptr;
+	}
+	return new Sprite(path); 
+}
+
+Sprite* getSpriteCopy(Sprite* inst) {
+	if (base_window::gameWindowInit == 0)
+	{
+		OutputDebugStringA
+		("\n\n\n\n\tSprite creating error : attempt to create sprite before framework initialisation\nReturned : nullptr");
+		return nullptr;
+	}
+	inst = new Sprite(inst);
+}
+
+void makeSpriteVisible(Sprite* inst, bool OnOff)
+{
+	if (inst != nullptr) {
+		inst->drawable = OnOff;
+	}
+}
+void getSpriteSize(Sprite* inst, int& x, int& y) {
+	if (inst != nullptr) {
+		x = inst->getWidth();
+		y = inst->getHeight();
+	}
+}
+void drawSprite(Sprite* inst,int x,int y) {
+	if (inst != nullptr) {
+		inst->setPosition(x, y);
+		inst->draw();
+	}
+}
+
+void setSpriteSize(Sprite* inst, int width, int height) {
+	if (inst != nullptr)inst->setSize(width, height);
+}
+
+void getSptitePosition(Sprite* inst, int& x, int& y)
+{
+	if (inst != nullptr) {
+		x = inst->getX();
+		y = inst->getY();
+	}
+}
+
 void rotateSprite(Sprite*) {}
+
+void setSpritePosition(Sprite* inst, int x, int y)
+{
+	if (inst != nullptr) {
+		inst->setPosition(x, y);
+	}
+}
 
 
 Sprite::SpriteVertexShader Sprite::SpriteVertexShader::initialUnit;
@@ -18,13 +75,25 @@ Sprite::SpritePixelShader Sprite::SpritePixelShader::initialUnit;
 
 bool Sprite::initDone = 0;
 
+std::list<Sprite*> Sprite::drawableList;
+
+
+
 float getRelPos(float spriteValue, float windowValue)
 {
 	return ((2 * spriteValue) / windowValue) - 1;
 }
 
 
-
+Sprite::Sprite(Sprite* inst) {
+	
+	drawableTexture = inst->drawableTexture;
+	spritePosition.x = inst->spritePosition.x;
+	spritePosition.y = inst->spritePosition.y;
+	width = inst->width;
+	height = inst->height;
+	drawableList.push_front(this);
+}
 
 Sprite::Sprite(const char* fileName)
 {
@@ -34,7 +103,7 @@ Sprite::Sprite(const char* fileName)
 	SpriteTexture = getPictureTexture(fileName);
 
 	if (SpriteTexture == nullptr) {
-		myBoxMessage("cant load the image", "External file problem")
+		myBoxMessage("cant load the image", "External file issue")
 			myEXC("problem with creating sprite while loading the image")
 	}
 
@@ -62,10 +131,10 @@ Sprite::Sprite(const char* fileName)
 	
 
 
-	if (FAILED(hr)) 
+	if (FAILED(hr))
 		myEXC("Problem with shader resource view creation")
 
-
+		drawableList.push_front(this);
 
 }
 
@@ -136,6 +205,12 @@ void Sprite::SpritePixelShader::initPixelShader() {
 	else myEXC("Pixel shader loading issue")
 }
 
+
+void Sprite::setSize(int widthV, int heightV)
+{
+	width = widthV;
+	height = heightV;
+}
 
 void Sprite::setPosition(int x, int y)
 {
@@ -228,6 +303,14 @@ void Sprite::setPosition(int x, int y)
 }
 
 
+void Sprite::drawSprites()
+{
+	for (auto& s : drawableList) {
+		if(s!=nullptr)
+			s->draw();
+	}
+}
+
 void Sprite::initShaders()
 {
 	if (initDone != 0) return;
@@ -292,6 +375,13 @@ void Sprite::initLayout()
 
 void Sprite::draw()
 {
+	if (!drawable) return;
+
+	if (!onceDrawn) {
+		setPosition(spritePosition.x, spritePosition.y);
+	}
+
+
 	UINT step = sizeof(corner);
 	UINT offset = 0;
 
@@ -337,5 +427,3 @@ void Sprite::initBlend() {
 
 	gw_context->OMSetBlendState(g_pBlendStateNoBlend, blendFactor, sampleMask);
 }
-
-

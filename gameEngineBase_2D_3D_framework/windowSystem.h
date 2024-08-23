@@ -22,6 +22,7 @@ void initSpriteCreation();
 class base_window {
 
 public:
+	static bool gameWindowInit;
 	static base_window* gameWindow;
 
 	graphicsControl* graphicsStation = nullptr;

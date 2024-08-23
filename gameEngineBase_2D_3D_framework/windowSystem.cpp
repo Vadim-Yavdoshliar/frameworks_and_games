@@ -10,6 +10,7 @@
 // 
 // -------------------------------------------------
 
+bool base_window::gameWindowInit = 0;
 base_window* base_window::gameWindow = nullptr;
 void WINAPI base_window::defBaseWindowProc
 (base_window& win,UINT& msg, WPARAM wParam, LPARAM lParam)
@@ -198,11 +199,13 @@ void base_window::init()
 	// and invokes an automatic reset of the position by placing 
 	// a window in the center of the screen
 
+	bool autoOption = 0;
 	if (X < 0 || Y < 0 ||
 		X > screenSizeX || Y > screenSizeY) {
 
 		X = screenSizeX / 2;
 		Y = screenSizeY / 2;
+		autoOption = 1;
 	}
 
 	// [ INCORRECT SIZE DATA CASE ]
@@ -220,6 +223,12 @@ void base_window::init()
 		width = screenSizeX / 3;
 		height = screenSizeY / 3;
 
+	}
+
+	if (autoOption) {
+
+		X -= width/2;
+		Y -= height/2;
 	}
 
 	mainWindow = CreateWindowExA
