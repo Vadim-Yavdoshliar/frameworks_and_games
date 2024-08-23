@@ -160,7 +160,7 @@ void base_window::processWindowTick()
 		if(graphicsStation!=nullptr)
 			graphicsStation->showFrame();
 		
-		Sleep(1);
+		//Sleep(1);
 }
 
 void base_window::clearWindowList()

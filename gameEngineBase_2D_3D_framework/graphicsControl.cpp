@@ -9,17 +9,21 @@ COM::ComPtr<ID3D11DeviceContext> graphicsControl::getControl()
 {
 	return ppContext;
 }
+
 COM::ComPtr<ID3D11InputLayout>& graphicsControl::getVertexInputLayout()
 {
 	return vertexInputLayout;
 }
+
 COM::ComPtr<IDXGISwapChain> graphicsControl::getppSwapChain()
 {
 	return ppSwapChain;
 }
 COM::ComPtr<ID3D11RenderTargetView> graphicsControl::getTargetView()
 {
+
 	return backBuffer;
+
 }
 graphicsControl::graphicsControl(base_window* winInst)
 {

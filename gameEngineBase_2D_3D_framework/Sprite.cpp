@@ -1,6 +1,7 @@
 #include "Sprite.h"
 
 
+
 Sprite* createSprite(const char* path) { return new Sprite(path); }
 void getSpriteSize(int& x, int& y) {}
 void drawSprite(Sprite* inst,int x,int y) {
@@ -9,13 +10,11 @@ void drawSprite(Sprite* inst,int x,int y) {
 }
 void resizeSprite(Sprite*, int width, int heith) {}
 void rotateSprite(Sprite*) {}
-void replaceSprite(Sprite*) {}
+
 
 Sprite::SpriteVertexShader Sprite::SpriteVertexShader::initialUnit;
 
 Sprite::SpritePixelShader Sprite::SpritePixelShader::initialUnit;
-
-
 
 bool Sprite::initDone = 0;
 
@@ -41,18 +40,19 @@ Sprite::Sprite(const char* fileName)
 
 	D3D11_TEXTURE2D_DESC spriteTextureDesciption;
 	SpriteTexture.Get()->GetDesc(&spriteTextureDesciption);
-	
+
 	width = spriteTextureDesciption.Width;
 	height = spriteTextureDesciption.Height;
 
-	
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC textureDesc = {};
+	D3D11_SHADER_RESOURCE_VIEW_DESC textureDesc = {};
 
 	textureDesc.Format = spriteTextureDesciption.Format;
 	textureDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
 	textureDesc.Texture2D.MipLevels = 1;
 	textureDesc.Texture2D.MostDetailedMip = 0;
+
 
 	hr = gw_device->CreateShaderResourceView(
 		SpriteTexture.Get(),
@@ -60,6 +60,7 @@ Sprite::Sprite(const char* fileName)
 		&drawableTexture
 	);
 	
+
 
 	if (FAILED(hr)) 
 		myEXC("Problem with shader resource view creation")
@@ -81,6 +82,9 @@ void initSpriteCreation() {
 	Sprite::initShaders();
 	
 	Sprite::initLayout();
+
+	Sprite::initBlend();
+
 	
 }
 
@@ -131,6 +135,7 @@ void Sprite::SpritePixelShader::initPixelShader() {
 	}
 	else myEXC("Pixel shader loading issue")
 }
+
 
 void Sprite::setPosition(int x, int y)
 {
@@ -222,6 +227,7 @@ void Sprite::setPosition(int x, int y)
 		onceDrawn = 1;
 }
 
+
 void Sprite::initShaders()
 {
 	if (initDone != 0) return;
@@ -255,7 +261,6 @@ void Sprite::initLayout()
 	vertexTexInputDecs.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 	vertexTexInputDecs.InstanceDataStepRate = 0;
 
-	
 	D3D11_INPUT_ELEMENT_DESC layoutDecsList[] = 
 	{ vertexPosInputDecs ,vertexTexInputDecs };
 
@@ -307,16 +312,30 @@ void Sprite::draw()
 	
 }
 
+void Sprite::initBlend() {
+	ID3D11BlendState* g_pBlendStateNoBlend = NULL;
 
+	D3D11_BLEND_DESC BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+	BlendState.RenderTarget[0].BlendEnable = TRUE;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA; 
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD; 
 
+	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE; 
+	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO; 
+	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD; 
 
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL; 
 
+	HRESULT hr = gw_device->CreateBlendState(&BlendState, &g_pBlendStateNoBlend);
+	if (FAILED(hr)) {
+		myEXC("Problem with blend creation")
+	}
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
 
-
-
-
-
-
-
+	gw_context->OMSetBlendState(g_pBlendStateNoBlend, blendFactor, sampleMask);
+}
 
 

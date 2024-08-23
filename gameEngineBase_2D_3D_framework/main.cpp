@@ -74,56 +74,47 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 #include <string>
 
 class MyGame : public gAPP {
+
 	Sprite* s;
 	Sprite* s1;
+	Sprite* s2;
 	int counter = 0;
-	void initFrameworkResources() override{}
+	float a = 0;
+	void initFrameworkResources() override{
+	
+	}
 	void init() override {
-		 s = createSprite("Screenshot_2.png");
-		 s1 = createSprite("chest_with_tongue_pixels.png");
-		//openTextStream();
+		 s = createSprite("Sprites\\Screenshot_2.png");
+		 s1 = createSprite("Sprites\\chest_with_tongue_pixels.png");
+		 s2 = createSprite("Sprites\\spaceShip.png");
 	}
 	void tick() override {
 		
 		drawSprite(s, 0, 0);
 		drawSprite(s1, 300, 100);
+		drawSprite(s2, a, 0);
+		if (a < 500) a += 3;
 	}
-
 	void gKeyPressed(gKey k) override { 
-		
-
-	/*	char t = k;
-		OutputDebugStringA("Pressed : ");
-		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n");*/
 
 	}
-
-	void mouseKeyPressed(mouseKey) override {}
+	void mouseKeyPressed(mouseKey) override {
+	
+	}
 	void gKeyReleased(gKey k) override {
 
-	/*	OutputDebugStringA("Released : ");
-		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n\n");*/
-
 	}
-	void mouseKeyReleased(mouseKey) override {}
-	void mousePosition(int x,int y) override {}
+	void mouseKeyReleased(mouseKey) override {
+	}
+	void mousePosition(int x,int y) override {
+	}
 	void charInput(char symbol) {
-#ifdef _STREAMING_TEST_
-		OutputDebugStringA((std::string() + symbol).c_str());
-		++counter;
-		if (counter == 10) {
-			OutputDebugStringA("\n\n");
-			OutputDebugStringA(closeTextStream().c_str());
-		}
-#endif
+
 	}
 	~MyGame() {
 		delete s;
 		delete s1;
 	}
-
 };
 
 _MAIN_DECL_{

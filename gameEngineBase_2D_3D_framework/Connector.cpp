@@ -6,10 +6,10 @@
 void gAPP::openTextStream()
 {
 	base_window::gameWindow->mainKeyboard.openStream();
+
 }
 std::string gAPP::closeTextStream()
 {
-	
 	return base_window::gameWindow->mainKeyboard.closeStream();
 }
 
@@ -17,10 +17,8 @@ std::string gAPP::closeTextStream()
 
 int gAPP::run(gAPP* mainAPP) {
 
-	
 
 #ifdef _DEBUG_INFO_
-
 	try {
 
 	mainAPP->initFrameworkResources();
@@ -31,14 +29,8 @@ int gAPP::run(gAPP* mainAPP) {
 
 	initSpriteCreation();
 
-	
 	mainAPP->init();
 
-	//initPicture();
-
-	clock_t start = clock();
-
-	
 	while (base_window::getCountOfWindows() != 0) {
 		
 		gw_object->graphicsStation->startFrame();
@@ -52,6 +44,7 @@ int gAPP::run(gAPP* mainAPP) {
 		gWindow.processWindowTick();
 
 		gw_object->graphicsStation->showFrame();
+
 	}
 
 

@@ -9,9 +9,9 @@ COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath);
 
 float getRelPos(float spriteValue,float windowValue);
 
-
 class Sprite
 {
+
 
 	static bool initDone;
 
@@ -78,13 +78,16 @@ public:
 
 	static void initShaders();
 	static void initLayout();
+	static void initBlend();
 
-	virtual void draw();
-	
 	void setSize(int widthV, int heightV);
 	void setPosition(int x, int y);
 	void rotate(int angle);
 
+
+	virtual void draw();
+
+	
 	Sprite(const char*);
 
 	~Sprite();
