@@ -14,6 +14,24 @@ class Sprite
 
 public:
 	
+<<<<<<< HEAD
+=======
+	vecXY pos;
+	vecXY UV;
+};
+
+corner spriteRectangle[4];
+
+
+
+public:
+
+	static void initShaders();
+	static void initLayout();
+	static void initBlend();
+
+	virtual void draw();
+>>>>>>> ed13ef4 (Sprite transparency)
 	
 	Sprite(const char*);
 

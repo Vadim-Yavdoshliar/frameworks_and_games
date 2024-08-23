@@ -26,6 +26,13 @@ int gAPP::run(gAPP* mainAPP) {
 
 	base_window::gameWindow = &gWindow;
 
+<<<<<<< HEAD
+=======
+	initSpriteCreation();
+
+	Sprite* s = createSprite("Sprites\\spaceShip.png");
+
+>>>>>>> ed13ef4 (Sprite transparency)
 	mainAPP->init();
 
 	//initPicture();
