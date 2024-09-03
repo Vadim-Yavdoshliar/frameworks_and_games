@@ -64,6 +64,8 @@ COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
 
 COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
 
+
+
 int width, height;
 struct vecXY {
 	float x = 0;
@@ -73,11 +75,14 @@ struct corner {
 	
 	vecXY pos;
 	vecXY UV;
-};
+}; 
 struct constantBufStruct {
-	XMMATRIX translateM;
-	XMMATRIX scaleM;
-	XMMATRIX rotationM;
+	float var1; 
+	float var2; 
+	float var3; 
+	bool checker1; 
+	bool checker2;
+	bool checker3;
 };
 
 constantBufStruct constantBufData;

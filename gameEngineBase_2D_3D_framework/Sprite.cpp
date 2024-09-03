@@ -97,35 +97,8 @@ Sprite::Sprite(Sprite* inst) {
 
 Sprite::Sprite(const char* fileName)
 {
-	//XMMatrixMultiply()
+	
 	HRESULT hr;
-
-	D3D11_BUFFER_DESC constBufDesc;
-	constBufDesc.ByteWidth = sizeof(XMMATRIX);
-	constBufDesc.StructureByteStride = sizeof(XMMATRIX);
-	constBufDesc.Usage = D3D11_USAGE_DEFAULT;
-	constBufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	constBufDesc.CPUAccessFlags = 0;
-	constBufDesc.MiscFlags = 0;
-
-	constantBufData.translateM = XMMatrixTranslation(0.0f,0.0f,0.0f);
-	constantBufData.scaleM = XMMatrixScaling(1.0f, 1.0f, 1.0f);
-	constantBufData.rotationM = XMMatrixRotationZ(0.0f);
-
-	XMMATRIX transformMatrix = XMMatrixMultiply(constantBufData.translateM, constantBufData.scaleM);
-	transformMatrix = XMMatrixMultiply(transformMatrix, constantBufData.rotationM);
-	
-	D3D11_SUBRESOURCE_DATA constBufSR;
-	constBufSR.pSysMem = &transformMatrix;
-	
-	hr = gw_device->CreateBuffer(
-		&constBufDesc,
-		&constBufSR,
-		&constantBuffer
-	);
-
-
-	if(FAILED(hr)) myEXC("constant buffer creation issue")
 
 	SpriteTexture = getPictureTexture(fileName);
 
@@ -333,7 +306,7 @@ void Sprite::setPosition(int x, int y)
 
 void Sprite::rotate(int angle)
 {
-	constantBuffer->
+	
 }
 
 
