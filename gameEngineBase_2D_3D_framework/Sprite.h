@@ -56,6 +56,8 @@ static bool initDone;
 
 	// MAIN SPRITE DATA
 
+COM::ComPtr<ID3D11Buffer> constantBuffer;
+
 COM::ComPtr<ID3D11Texture2D> SpriteTexture;
 
 COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
@@ -72,6 +74,13 @@ struct corner {
 	vecXY pos;
 	vecXY UV;
 };
+struct constantBufStruct {
+	XMMATRIX translateM;
+	XMMATRIX scaleM;
+	XMMATRIX rotationM;
+};
+
+constantBufStruct constantBufData;
 
 bool onceDrawn = 0;
 

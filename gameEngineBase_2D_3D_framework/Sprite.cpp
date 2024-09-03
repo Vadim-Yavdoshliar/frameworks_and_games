@@ -97,8 +97,35 @@ Sprite::Sprite(Sprite* inst) {
 
 Sprite::Sprite(const char* fileName)
 {
-
+	//XMMatrixMultiply()
 	HRESULT hr;
+
+	D3D11_BUFFER_DESC constBufDesc;
+	constBufDesc.ByteWidth = sizeof(XMMATRIX);
+	constBufDesc.StructureByteStride = sizeof(XMMATRIX);
+	constBufDesc.Usage = D3D11_USAGE_DEFAULT;
+	constBufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	constBufDesc.CPUAccessFlags = 0;
+	constBufDesc.MiscFlags = 0;
+
+	constantBufData.translateM = XMMatrixTranslation(0.0f,0.0f,0.0f);
+	constantBufData.scaleM = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	constantBufData.rotationM = XMMatrixRotationZ(0.0f);
+
+	XMMATRIX transformMatrix = XMMatrixMultiply(constantBufData.translateM, constantBufData.scaleM);
+	transformMatrix = XMMatrixMultiply(transformMatrix, constantBufData.rotationM);
+	
+	D3D11_SUBRESOURCE_DATA constBufSR;
+	constBufSR.pSysMem = &transformMatrix;
+	
+	hr = gw_device->CreateBuffer(
+		&constBufDesc,
+		&constBufSR,
+		&constantBuffer
+	);
+
+
+	if(FAILED(hr)) myEXC("constant buffer creation issue")
 
 	SpriteTexture = getPictureTexture(fileName);
 
@@ -133,6 +160,82 @@ Sprite::Sprite(const char* fileName)
 
 	if (FAILED(hr))
 		myEXC("Problem with shader resource view creation")
+
+		spriteRectangle[0] = {
+		{getRelPos
+		(
+			spritePosition.x,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			spritePosition.y,
+			base_window::gameWindow->getHeight()
+		)},
+		{0,0} };
+	spriteRectangle[1] = {
+		{getRelPos
+		(
+			spritePosition.x + width,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			spritePosition.y,
+			base_window::gameWindow->getHeight()
+		)},
+		{1,0}
+	};
+	spriteRectangle[2] = {
+		{ getRelPos
+		(
+			spritePosition.x,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			spritePosition.y + height,
+			base_window::gameWindow->getHeight()
+		)},
+		{0,1}
+	};
+	spriteRectangle[3] = {
+		{getRelPos
+		(
+			spritePosition.x + width,
+			base_window::gameWindow->getWidth()
+		),
+		-getRelPos
+		(
+			spritePosition.y + height,
+			base_window::gameWindow->getHeight()
+		)},
+		{1,1}
+	};
+
+
+	D3D11_BUFFER_DESC buffer_desc = {};
+	buffer_desc.ByteWidth = sizeof(spriteRectangle);
+	buffer_desc.StructureByteStride = sizeof(corner);
+	buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+	buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	buffer_desc.CPUAccessFlags = 0;
+	buffer_desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA actualVertexData = {};
+	actualVertexData.pSysMem = spriteRectangle;
+
+	HRESULT hr;
+
+	hr = gw_device->CreateBuffer(
+		&buffer_desc,
+		&actualVertexData,
+		&spriteVertexBuffer
+	);
+
+	if (FAILED(hr))
+		myEXC("Vertex BUFFER creation issue")
+
 
 		drawableList.push_front(this);
 
@@ -224,82 +327,13 @@ void Sprite::setPosition(int x, int y)
 	spritePosition.y = y;
 
 
-	spriteRectangle[0] = { 
-		{getRelPos
-		(
-			x,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			y,
-			base_window::gameWindow->getHeight()
-		)},
-		{0,0} };
-	spriteRectangle[1] = {
-		{getRelPos
-		(
-			x+width,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			y,
-			base_window::gameWindow->getHeight()
-		)},
-		{1,0}
-	};
-	spriteRectangle[2] = {
-		{ getRelPos
-		(
-			x,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			y+height,
-			base_window::gameWindow->getHeight()
-		)},
-		{0,1}
-	};
-	spriteRectangle[3] = {
-		{getRelPos
-		(
-			x+width,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			y+height,
-			base_window::gameWindow->getHeight()
-		)},
-		{1,1}
-	};
-
-
-	D3D11_BUFFER_DESC buffer_desc = {};
-	buffer_desc.ByteWidth = sizeof(spriteRectangle);
-	buffer_desc.StructureByteStride = sizeof(corner);
-	buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	buffer_desc.CPUAccessFlags = 0;
-	buffer_desc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA actualVertexData = {};
-	actualVertexData.pSysMem = spriteRectangle;
-
-	HRESULT hr;
-
-	hr = gw_device->CreateBuffer(
-		&buffer_desc,
-		&actualVertexData,
-		&spriteVertexBuffer
-	);
-
-	if (FAILED(hr))
-		myEXC("Vertex BUFFER creation issue")
-
+	
 		onceDrawn = 1;
+}
+
+void Sprite::rotate(int angle)
+{
+	constantBuffer->
 }
 
 
@@ -397,6 +431,11 @@ void Sprite::draw()
 		0,
 		1,
 		drawableTexture.GetAddressOf());
+
+	gw_context->VSSetConstantBuffers(
+		0, 
+		1, 
+		constantBuffer.GetAddressOf());
 
 	gw_context->Draw(4,0);
 	

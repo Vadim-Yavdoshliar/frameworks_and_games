@@ -12,7 +12,8 @@
 #define myBoxMessage(message,errorType) MessageBoxA(gw_object->getWND(),message,errorType,MB_OK);
 
 
-
+#include <DirectXMath.h>
+using namespace DirectX;
 #include <Windows.h>
 #include <list>
 #include <queue>
