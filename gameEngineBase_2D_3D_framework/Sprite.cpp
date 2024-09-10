@@ -1,6 +1,7 @@
 #include "Sprite.h"
 
 
+<<<<<<< Updated upstream
 Sprite* createSprite(const char*) { return nullptr; }
 void getSpriteSize(int& x, int& y) {}
 void drawSprite(Sprite*) {}
@@ -10,6 +11,19 @@ void rotateSprite(Sprite*) {}
 void replaceSprite(Sprite*) {}
 =======
 void replaceSprite(Sprite*) {}
+=======
+void rotateSprite(Sprite* init, int angle) {
+	init->rotate(angle);
+}
+
+void setSpritePosition(Sprite* inst, int x, int y)
+{
+	if (inst != nullptr) {
+		inst->setPosition(x, y);
+	}
+}
+
+>>>>>>> Stashed changes
 
 Sprite::SpriteVertexShader Sprite::SpriteVertexShader::initialUnit;
 
@@ -196,6 +210,93 @@ void Sprite::SpritePixelShader::initPixelShader() {
 	else myEXC("Pixel shader loading issue")
 }
 
+<<<<<<< Updated upstream
+=======
+
+void Sprite::setSize(int widthV, int heightV)
+{
+	width = widthV;
+	height = heightV;
+}
+
+void Sprite::setPosition(int x, int y)
+{
+	if (onceDrawn) {
+		if (x == spritePosition.x && y == spritePosition.y) {
+			return;
+		}
+	}
+	
+
+	translationBufferSet = 1;
+
+	constantBufData.translationData = {
+		getRelPos(x,base_window::gameWindow->getWidth())
+		-getRelPos(spritePosition.x, base_window::gameWindow->getWidth()),
+		-getRelPos(y,base_window::gameWindow->getHeight())
+		+getRelPos(spritePosition.y, base_window::gameWindow->getHeight()),
+			0,0 };
+
+	spritePosition.x = x;
+	spritePosition.y = y;
+
+	onceDrawn = 1;
+}
+
+void Sprite::updateResources() {
+
+	if (translationBufferSet) {
+		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+
+		gw_context->Map(
+			constantBuff.Get(),
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&mappedResource);
+
+		memcpy(mappedResource.pData,
+			&constantBufData,
+			sizeof(constantBufStruct));
+
+
+		gw_context->Unmap(constantBuff.Get(), 0);
+
+		translationBufferSet = 0;
+	}
+}
+
+
+void Sprite::rotate(int angle)
+{
+	if (onceDrawn) {
+		if (angle== spriteCurrAngle) {
+			return;
+		}
+	}
+	spriteCurrAngle = angle%360;
+	translationBufferSet = 1;
+
+	float t1 = getRelPos(base_window::gameWindow->getWidth()/2-getWidth()/2, base_window::gameWindow->getWidth())
+		- getRelPos(spritePosition.x, base_window::gameWindow->getWidth());
+	float t2 = -getRelPos(base_window::gameWindow->getHeight()/2 - getHeight() / 2, base_window::gameWindow->getHeight())
+		+ getRelPos(spritePosition.y, base_window::gameWindow->getHeight());
+
+	constantBufData.rotationData = { t1,t2,XMConvertToRadians(angle),3};
+	onceDrawn = 1;
+}
+
+
+void Sprite::drawSprites()
+{
+	for (auto& s : drawableList) {
+		if (s != nullptr) {
+			s->draw();
+		}
+	}
+}
+
+>>>>>>> Stashed changes
 void Sprite::initShaders()
 {
 	if (initDone != 0) return;

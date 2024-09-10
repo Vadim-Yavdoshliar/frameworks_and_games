@@ -74,10 +74,50 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 #include <string>
 
 class MyGame : public gAPP {
+<<<<<<< Updated upstream
 	int counter = 0;
 	void initFrameworkResources() override{}
 	void init() override {
 		openTextStream();
+=======
+
+	//Sprite* s = nullptr;
+	Sprite* s1 = nullptr;
+	//Sprite* s2=nullptr;
+	//Sprite* s3;
+
+	float a = 200, b = 200;
+	int angle = 1;
+	void initFrameworkResources() override{
+	
+	}
+	void init() override {
+		//s1 = createSprite("Sprites\\Ball.png");
+		//s1 = createSprite("Sprites\\chest_with_tongue_pixels.png");
+		s1 = createSprite("Sprites\\Wood.png");
+		
+		//s3 = getSpriteCopy(s1);
+
+		// int v1, v2;
+		 //getSpriteSize(s2, v1, v2);
+		 //setSpriteSize(s2, v1 / 4, v2 / 4);
+		 //getSpriteSize(s1, v1, v2);
+		 //setSpriteSize(s1, v1 / 2, v2/2);
+		// setSpriteSize(s, v1 / 2, v2 / 2);
+		// setSpritePosition(s1, 400, 100);
+
+		 setSpritePosition(s1,82, 84);
+		 rotateSprite(s1, angle);
+
+		// makeSpriteVisible(s3, true);
+		// makeSpriteVisible(s2,true);
+		// makeSpriteVisible(s1,true);
+		 makeSpriteVisible(s1,true);
+	}
+	void tick() override {
+		angle++;
+		rotateSprite(s1, angle);
+>>>>>>> Stashed changes
 	}
 	void tick() override {}
 
@@ -99,6 +139,7 @@ class MyGame : public gAPP {
 		OutputDebugStringA("\n\n");
 
 	}
+<<<<<<< Updated upstream
 	void mouseKeyReleased(mouseKey) override {}
 	void mousePosition(int x,int y) override {}
 	void charInput(char symbol) {
@@ -110,6 +151,13 @@ class MyGame : public gAPP {
 			OutputDebugStringA(closeTextStream().c_str());
 		}
 #endif
+=======
+	~MyGame() {
+		//delete s;
+		delete s1;
+		//delete s2;
+		//delete s3;
+>>>>>>> Stashed changes
 	}
 };
 
