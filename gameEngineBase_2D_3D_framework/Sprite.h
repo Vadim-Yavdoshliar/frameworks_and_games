@@ -56,7 +56,7 @@ static bool initDone;
 
 	// MAIN SPRITE DATA
 
-COM::ComPtr<ID3D11Buffer> constantBuffer;
+COM::ComPtr<ID3D11Buffer> constantBuff;
 
 COM::ComPtr<ID3D11Texture2D> SpriteTexture;
 
@@ -64,7 +64,7 @@ COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
 
 COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
 
-
+void clearBuffersData();
 
 int width, height;
 struct vecXY {
@@ -77,15 +77,16 @@ struct corner {
 	vecXY UV;
 }; 
 struct constantBufStruct {
-	float var1; 
-	float var2; 
-	float var3; 
-	bool checker1; 
-	bool checker2;
-	bool checker3;
+	XMFLOAT4 translationData = {0,0,0,0};
+	XMFLOAT4 rotationData = {0,0,0,0};
+	XMFLOAT4 scaleDataAndSize = {0,0,0,0};	
 };
 
 constantBufStruct constantBufData;
+
+void updateResources();
+
+bool translationBufferSet = 0;
 
 bool onceDrawn = 0;
 

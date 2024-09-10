@@ -198,8 +198,6 @@ Sprite::Sprite(const char* fileName)
 	D3D11_SUBRESOURCE_DATA actualVertexData = {};
 	actualVertexData.pSysMem = spriteRectangle;
 
-	HRESULT hr;
-
 	hr = gw_device->CreateBuffer(
 		&buffer_desc,
 		&actualVertexData,
@@ -208,6 +206,31 @@ Sprite::Sprite(const char* fileName)
 
 	if (FAILED(hr))
 		myEXC("Vertex BUFFER creation issue")
+
+
+	constantBufData.scaleDataAndSize.z = (float)width * (2.0f / base_window::gameWindow->getWidth());
+	constantBufData.scaleDataAndSize.w = (float)height * (2.0f / base_window::gameWindow->getHeight());
+
+	D3D11_BUFFER_DESC const_buffer_desc = {};
+	const_buffer_desc.ByteWidth = sizeof(constantBufStruct);
+	const_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;
+	const_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	const_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	const_buffer_desc.MiscFlags = 0;
+	const_buffer_desc.StructureByteStride = 0;
+	
+	
+
+	
+	hr = gw_device->CreateBuffer(
+		&const_buffer_desc,
+		nullptr,
+		&constantBuff
+	);
+
+	if (FAILED(hr))
+		myEXC("Constant BUFFER creation issue")
+		
 
 
 		drawableList.push_front(this);
@@ -295,14 +318,46 @@ void Sprite::setPosition(int x, int y)
 			return;
 		}
 	}
+	
+
+	translationBufferSet = 1;
+
+	constantBufData.translationData = {
+		getRelPos(x,base_window::gameWindow->getWidth())
+		-getRelPos(spritePosition.x, base_window::gameWindow->getWidth()),
+		-getRelPos(y,base_window::gameWindow->getHeight())
+		+getRelPos(spritePosition.y, base_window::gameWindow->getHeight()),
+			0,0 };
 
 	spritePosition.x = x;
 	spritePosition.y = y;
 
-
-	
-		onceDrawn = 1;
+	onceDrawn = 1;
 }
+
+void Sprite::updateResources() {
+
+	if (translationBufferSet) {
+		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+
+		gw_context->Map(
+			constantBuff.Get(),
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&mappedResource);
+
+		memcpy(mappedResource.pData,
+			&constantBufData,
+			sizeof(constantBufStruct));
+
+
+		gw_context->Unmap(constantBuff.Get(), 0);
+
+		translationBufferSet = 0;
+	}
+}
+
 
 void Sprite::rotate(int angle)
 {
@@ -310,11 +365,28 @@ void Sprite::rotate(int angle)
 }
 
 
+void Sprite::clearBuffersData()
+{
+	if (translationBufferSet) {
+		
+		constantBufData.translationData = { 0,0,0,0 };
+		constantBufData.rotationData = { 0,0,0,0 };
+		constantBufData.scaleDataAndSize.x = 0;
+		constantBufData.scaleDataAndSize.y = 0;
+
+		updateResources();
+
+		translationBufferSet = 0;
+	}
+}
+
 void Sprite::drawSprites()
 {
 	for (auto& s : drawableList) {
-		if(s!=nullptr)
+		if (s != nullptr) {
 			s->draw();
+			//s->clearBuffersData();
+		}
 	}
 }
 
@@ -404,11 +476,15 @@ void Sprite::draw()
 		0,
 		1,
 		drawableTexture.GetAddressOf());
+	
+	updateResources();
 
 	gw_context->VSSetConstantBuffers(
-		0, 
+		0,
 		1, 
-		constantBuffer.GetAddressOf());
+		constantBuff.GetAddressOf());
+
+	
 
 	gw_context->Draw(4,0);
 	

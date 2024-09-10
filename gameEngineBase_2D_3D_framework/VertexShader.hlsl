@@ -1,29 +1,8 @@
 
-cbuffer TranslationBuf : register(c0) {
-	float x;
-	float y;
-	float z;
-	bool checker1;
-	bool checker2;
-	bool checker3;
-};
-
-cbuffer ScaleBuf : register(c1) {
-	float x;
-	float y;
-	float z;
-	bool checker1;
-	bool checker2;
-	bool checker3;
-};
-
-cbuffer RotationBuf : register(c2) {
-	float x;
-	float y;
-	float z;
-	bool checker1;
-	bool checker2;
-	bool checker3;
+cbuffer TransformationBuf : register(b0) {
+    float4 translationData;
+    float4 rotationData;
+    float4 scaleAndSizeData;
 };
 
 
@@ -39,36 +18,34 @@ struct VSIn {
 
 };
 
-float3x3 translationMat(float x, float y) {
-
+float3x3 getTranslationMat(float xv, float yv) {
+	
+    return float3x3(  1,   0,  0,
+					  0,   1,  0,
+					  xv,  yv, 1
+	);
+	
 }
 
-float3x3 scaleMat(float x, float y) {
-
-}
-
-float3x3 rotation_x(float y, float z) {
-
-}
-
-float3x3 rotation_y(float x, float z) {
-
-}
-
-float3x3 rotation_z(float x, float y) {
-
-}
 
 VSOut main( VSIn input )
 {
-	float3 mainVector(input.pos.x, input.pos.y, 0.0f);
-
-	if (TranslationBuf.checker1) {
-		mainVector = mul(TranslationBuf.x, TranslationBuf.y, TranslationBuf.z);
-	}
-
+	float3 mainVector = { input.pos.x, input.pos.y, 1.0f };
+	
+    if (translationData.x != 0 || translationData.y != 0)
+    {
+        mainVector = mul(
+		mainVector,
+		getTranslationMat(
+		translationData.x,
+		translationData.y)
+		);
+        
+    }
+   // float3 mainVector2 = mul(mainVector, getTranslationMat(1.0f,1.0f));
+   
 	VSOut v;
-	v.vertexPos = float4(input.pos.x, input.pos.y, 0.0f, 1.0f);
+    v.vertexPos = float4(mainVector.x, mainVector.y, 0.0f, 1.0f);
 	v.texPos = float2(input.texData.x,input.texData.y);
 	
 	return v;
