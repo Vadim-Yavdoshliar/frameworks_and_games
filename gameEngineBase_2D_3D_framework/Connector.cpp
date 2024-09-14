@@ -1,21 +1,22 @@
 
 #include "gApp.h"
 #include "windowSystem.h"
-
+#include "autoDraw.h"
 
 void gAPP::openTextStream()
 {
 	base_window::gameWindow->mainKeyboard.openStream();
+
 }
 std::string gAPP::closeTextStream()
 {
-	
 	return base_window::gameWindow->mainKeyboard.closeStream();
 }
 
+
+
 int gAPP::run(gAPP* mainAPP) {
 
-	
 
 #ifdef _DEBUG_INFO_
 	try {
@@ -26,38 +27,36 @@ int gAPP::run(gAPP* mainAPP) {
 
 	base_window::gameWindow = &gWindow;
 
-<<<<<<< HEAD
-=======
+	base_window::gameWindowInit = 1;
+
 	initSpriteCreation();
 
-	Sprite* s = createSprite("Sprites\\spaceShip.png");
-
->>>>>>> ed13ef4 (Sprite transparency)
 	mainAPP->init();
-
-	//initPicture();
 
 	while (base_window::getCountOfWindows() != 0) {
 		
+		gw_object->graphicsStation->startFrame();
+
 		mainAPP->tick();
-
-		//drawTextureTest();
-
+		
 		processMouse(mainAPP);
 		processKeyborad(mainAPP);
-
+		
+		drawAllStuff();
 		
 		gWindow.processWindowTick();
 
+		gw_object->graphicsStation->showFrame();
 
 	}
+
 
 	delete mainAPP;
 
 	return 0;
 	}
 	catch (std::exception& error) { OutputDebugStringA(error.what()); }
-	catch (...) { OutputDebugStringA("Something went badly wrong"); }
+	catch (...) { OutputDebugStringA("\n\n\n\nSomething went badly wrong\n\n\n\n"); }
 
 #endif
 

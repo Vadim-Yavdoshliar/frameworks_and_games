@@ -1,3 +1,4 @@
+
 #include "windowSystem.h"
 //#define _INPUT_TEST_
 
@@ -123,6 +124,7 @@ bool WinMouse::isWheelDown() {
 
 void WinMouse::processKeyMessage(UINT msg, LPARAM lParam, WPARAM wParam) {
     if (mouseIsAvailable) {
+
         switch (msg)
         {
         case WM_LBUTTONDOWN:
@@ -279,26 +281,29 @@ void processMouse(gAPP* app) {
         app->mouseKeyPressed(gAPP::RReleased);
     }
     else if (base_window::gameWindow->mainMouse.isMButtonPressed()) {
-        
+
+        app->mouseKeyPressed(gAPP::MPressed);
     }
     else if (base_window::gameWindow->mainMouse.isMButtonReleased()) {
-        
+        app->mouseKeyPressed(gAPP::MReleased);
     }
     else if (base_window::gameWindow->mainMouse.isSideButtonPressed()) {
-        
+        app->mouseKeyPressed(gAPP::SidePressed);
     }
     else if (base_window::gameWindow->mainMouse.isSideButtonReleased()) {
-        
+        app->mouseKeyPressed(gAPP::SideReleased);
     }
     else if (base_window::gameWindow->mainMouse.isWheelUp()) {
-        
+        app->mouseKeyPressed(gAPP::WheelUp);
     }
     else if (base_window::gameWindow->mainMouse.isWheelDown()) {
-        
+        app->mouseKeyPressed(gAPP::WheelDown);
     }
     else {
-        
+        app->mouseKeyPressed(gAPP::none);
+
     }
+
 
 }
 

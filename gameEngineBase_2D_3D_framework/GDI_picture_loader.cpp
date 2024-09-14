@@ -49,10 +49,4 @@ COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath)
 }
 
 
-
-void drawTextureTest() {
-    
-  
-}
-
 // additional functions

@@ -74,14 +74,8 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 #include <string>
 
 class MyGame : public gAPP {
-<<<<<<< Updated upstream
-	int counter = 0;
-	void initFrameworkResources() override{}
-	void init() override {
-		openTextStream();
-=======
 
-	//Sprite* s = nullptr;
+	Sprite* s = nullptr;
 	Sprite* s1 = nullptr;
 	//Sprite* s2=nullptr;
 	//Sprite* s3;
@@ -92,9 +86,9 @@ class MyGame : public gAPP {
 	
 	}
 	void init() override {
-		//s1 = createSprite("Sprites\\Ball.png");
+		s1 = createSprite("Sprites\\Ball.png");
 		//s1 = createSprite("Sprites\\chest_with_tongue_pixels.png");
-		s1 = createSprite("Sprites\\Wood.png");
+		s = createSprite("Sprites\\Wood.png");
 		
 		//s3 = getSpriteCopy(s1);
 
@@ -106,58 +100,45 @@ class MyGame : public gAPP {
 		// setSpriteSize(s, v1 / 2, v2 / 2);
 		// setSpritePosition(s1, 400, 100);
 
-		 setSpritePosition(s1,82, 84);
-		 rotateSprite(s1, angle);
+		 //setSpritePosition(s1,100, 100);
+		 //rotateSpriteZ(s1, angle);
+		 setSpritePosition(s, 150, 150);
+		 rotateSpriteX(s, angle);
 
 		// makeSpriteVisible(s3, true);
 		// makeSpriteVisible(s2,true);
 		// makeSpriteVisible(s1,true);
-		 makeSpriteVisible(s1,true);
+		 //makeSpriteVisible(s1,true);
+		 makeSpriteVisible(s, true);
 	}
 	void tick() override {
-		angle++;
-		rotateSprite(s1, angle);
->>>>>>> Stashed changes
+		angle=(angle+1)%360;
+		int aY = angle % 80;
+		//rotateSpriteZ(s1, -angle);
+		//rotateSpriteZ(s, angle);
+		rotateSpriteX(s, angle);
 	}
-	void tick() override {}
-
 	void gKeyPressed(gKey k) override { 
-		
-
-		char t = k;
-		OutputDebugStringA("Pressed : ");
-		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n");
 
 	}
-
-	void mouseKeyPressed(mouseKey) override {}
+	void mouseKeyPressed(mouseKey) override {
+	
+	}
 	void gKeyReleased(gKey k) override {
 
-		OutputDebugStringA("Released : ");
-		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n\n");
+	}
+	void mouseKeyReleased(mouseKey) override {
+	}
+	void mousePosition(int x,int y) override {
+	}
+	void charInput(char symbol) {
 
 	}
-<<<<<<< Updated upstream
-	void mouseKeyReleased(mouseKey) override {}
-	void mousePosition(int x,int y) override {}
-	void charInput(char symbol) {
-#ifdef _STREAMING_TEST_
-		OutputDebugStringA((std::string() + symbol).c_str());
-		++counter;
-		if (counter == 10) {
-			OutputDebugStringA("\n\n");
-			OutputDebugStringA(closeTextStream().c_str());
-		}
-#endif
-=======
 	~MyGame() {
-		//delete s;
+		delete s;
 		delete s1;
 		//delete s2;
 		//delete s3;
->>>>>>> Stashed changes
 	}
 };
 

@@ -80,30 +80,41 @@ VSOut main( VSIn input )
 		);
         
     }
-    if (rotationData.z != 0)
+    if (rotationData.z != 0 || rotationData.y!=0 || rotationData.x!=0)
     {
-       
-        mainVector = mul(
+        /*if (translationData.z != 0 || translationData.w != 0)
+        {
+            mainVector = mul(
 		mainVector,
 		getTranslationMat(
-		rotationData.x,
-		rotationData.y)
+		translationData.z,
+		translationData.w)
 		);
-        mainVector = mul(mainVector, aspectRatioCorrection(700.0f / 800.0f));
-        if (rotationData.w == 3)
+        }*/
+        mainVector = mul(mainVector, aspectRatioCorrection(scaleAndSizeData.w / scaleAndSizeData.z));
+        if (rotationData.z != 0)
         {
             mainVector = mul(mainVector, rotation_z(rotationData.z));
         }
-        mainVector = mul(mainVector, aspectRatioCorrection(800.0f / 700.0f));
-        mainVector = mul(
+        if (rotationData.y != 0)
+        {
+            mainVector = mul(mainVector, rotation_y(rotationData.y));
+        }
+        if (rotationData.x != 0)
+        {
+            mainVector = mul(mainVector, rotation_x(rotationData.x));
+        }
+        mainVector = mul(mainVector, aspectRatioCorrection(scaleAndSizeData.z / scaleAndSizeData.w));
+        /*if (translationData.z != 0 || translationData.w != 0)
+        {
+            mainVector = mul(
 		mainVector,
 		getTranslationMat(
-		-rotationData.x,
-		-rotationData.y)
+		-translationData.z,
+		-translationData.w)
 		);
-        
+        }*/
     }
-    
     
 	VSOut v;
     v.vertexPos = float4(mainVector.x, mainVector.y, 0.0f, 1.0f);

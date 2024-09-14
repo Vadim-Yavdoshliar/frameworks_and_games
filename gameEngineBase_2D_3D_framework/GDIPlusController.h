@@ -5,6 +5,7 @@ using namespace Gdiplus;
 
 class GDIPlusController {
 public:
+
     GDIPlusController();
 
     ~GDIPlusController();
@@ -15,6 +16,7 @@ public:
     }
 
 private:
+
     ULONG_PTR gdiplusToken;
 };
 

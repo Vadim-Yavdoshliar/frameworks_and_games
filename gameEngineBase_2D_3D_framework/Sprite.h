@@ -7,14 +7,12 @@
 
 COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath);
 
-
+float getRelPos(float spriteValue,float windowValue);
 
 class Sprite
 {
-
+	static std::list<Sprite*>drawableList;
 public:
-<<<<<<< Updated upstream
-=======
 	bool drawable = 0;
 private:
 
@@ -72,14 +70,9 @@ struct vecXY {
 	float y = 0;
 };
 struct corner {
->>>>>>> Stashed changes
 	
-<<<<<<< HEAD
-=======
 	vecXY pos;
 	vecXY UV;
-<<<<<<< Updated upstream
-=======
 }; 
 struct constantBufStruct {
 	XMFLOAT4 translationData = {0,0,0,0};
@@ -88,25 +81,45 @@ struct constantBufStruct {
 	/// </summary>
 	XMFLOAT4 rotationData = {0,0,0,0};
 	XMFLOAT4 scaleDataAndSize = {0,0,0,0};	
->>>>>>> Stashed changes
 };
+
+constantBufStruct constantBufData;
+
+void updateResources();
+
+bool translationBufferSet = 0;
+
+bool onceDrawn = 0;
 
 corner spriteRectangle[4];
 
+vecXY spritePosition;
 
-
-int spriteCurrAngle = 0;
+XMFLOAT3 spriteCurrAngle = {0,0,0};
 
 public:
+
+	static void drawSprites();
+
+	int getWidth() { return width; }
+	int getHeight() { return height; }
+
+	int getX() { return spritePosition.x; }
+	int getY() { return spritePosition.y; }
 
 	static void initShaders();
 	static void initLayout();
 	static void initBlend();
 
+	void setSize(int widthV, int heightV);
+	void setPosition(int x, int y);
+	void rotate(int angle,int coordinate);
+
 	virtual void draw();
->>>>>>> ed13ef4 (Sprite transparency)
+
 	
 	Sprite(const char*);
+	Sprite(Sprite*);
 
 	~Sprite();
 

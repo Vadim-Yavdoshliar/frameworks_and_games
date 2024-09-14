@@ -13,30 +13,24 @@
 class Sprite;
 
 Sprite* createSprite(const char*);
-<<<<<<< Updated upstream
-void getSpriteSize(int& x, int& y);
-void drawSprite(Sprite*);
-void resizeSprite(Sprite*,int width,int heith);
-void rotateSprite(Sprite*);
-void replaceSprite(Sprite*);
-=======
 Sprite* getSpriteCopy(Sprite*);
 
 void makeSpriteVisible(Sprite*, bool OnOff);
 void getSpriteSize(Sprite*,int& width, int& height);
 void setSpriteSize(Sprite*,int width,int height);
 void getSptitePosition(Sprite*,int& x,int& y);
-void rotateSprite(Sprite*,int);
+void rotateSpriteX(Sprite*, int);
+void rotateSpriteY(Sprite*, int);
+void rotateSpriteZ(Sprite*, int);
 void setSpritePosition(Sprite*, int x, int y);
 
->>>>>>> Stashed changes
 
 class gAPP {
 
 protected:
 
 	const char* gName = "My new game";
-	int width = 500, height = 500;
+	int width = 800, height = 700;
 
 public:
 
