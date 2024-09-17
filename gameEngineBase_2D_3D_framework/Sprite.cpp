@@ -110,6 +110,9 @@ Sprite::Sprite(const char* fileName)
 	D3D11_TEXTURE2D_DESC spriteTextureDesciption;
 	SpriteTexture.Get()->GetDesc(&spriteTextureDesciption);
 
+	orginalWidth = spriteTextureDesciption.Width;
+	originalHeight = spriteTextureDesciption.Height;
+
 	width = spriteTextureDesciption.Width;
 	height = spriteTextureDesciption.Height;
 
@@ -134,58 +137,19 @@ Sprite::Sprite(const char* fileName)
 	if (FAILED(hr))
 		myEXC("Problem with shader resource view creation")
 
-		spriteRectangle[0] = {
-		{getRelPos
-		(
-			spritePosition.x,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			spritePosition.y,
-			base_window::gameWindow->getHeight()
-		)},
-		{0,0} };
-	spriteRectangle[1] = {
-		{getRelPos
-		(
-			spritePosition.x + width,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			spritePosition.y,
-			base_window::gameWindow->getHeight()
-		)},
-		{1,0}
-	};
-	spriteRectangle[2] = {
-		{ getRelPos
-		(
-			spritePosition.x,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			spritePosition.y + height,
-			base_window::gameWindow->getHeight()
-		)},
-		{0,1}
-	};
-	spriteRectangle[3] = {
-		{getRelPos
-		(
-			spritePosition.x + width,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			spritePosition.y + height,
-			base_window::gameWindow->getHeight()
-		)},
-		{1,1}
-	};
+		int winW = base_window::gameWindow->getWidth();
+		int winH = base_window::gameWindow->getHeight();
 
+		float c1 = getRelPos((winW - width) / 2.0f, winW);
+		float c2 = -getRelPos((winH - height) / 2.0f, winH);
+
+		spriteRectangle[0] = {{c1,c2},{0,0} };
+		spriteRectangle[1] = { {-c1,c2},{1,0} };
+		spriteRectangle[2] = { {c1,-c2},{0,1} };
+		spriteRectangle[3] = { {-c1,-c2},{1,1} };
+
+		spritePosition.x = (winW) / 2;
+		spritePosition.y = (winH) / 2;
 
 	D3D11_BUFFER_DESC buffer_desc = {};
 	buffer_desc.ByteWidth = sizeof(spriteRectangle);
@@ -208,8 +172,8 @@ Sprite::Sprite(const char* fileName)
 		myEXC("Vertex BUFFER creation issue")
 
 
-	constantBufData.scaleDataAndSize.z = (float)width * (2.0f / base_window::gameWindow->getWidth());
-	constantBufData.scaleDataAndSize.w = (float)height * (2.0f / base_window::gameWindow->getHeight());
+	constantBufData.scaleDataAndSize.z = base_window::gameWindow->getWidth();
+	constantBufData.scaleDataAndSize.w = base_window::gameWindow->getHeight();
 
 	D3D11_BUFFER_DESC const_buffer_desc = {};
 	const_buffer_desc.ByteWidth = sizeof(constantBufStruct);
@@ -230,8 +194,9 @@ Sprite::Sprite(const char* fileName)
 
 	if (FAILED(hr))
 		myEXC("Constant BUFFER creation issue")
-		
 
+		translationBufferSet = 1;
+		updateResources();
 
 		drawableList.push_front(this);
 
@@ -307,33 +272,55 @@ void Sprite::SpritePixelShader::initPixelShader() {
 
 void Sprite::setSize(int widthV, int heightV)
 {
+
+	if (widthV == width && heightV == height) {
+		return;
+	}
+	
+	translationBufferSet = 1;
+
 	width = widthV;
 	height = heightV;
+
+	constantBufData.scaleDataAndSize.x = (float)width/orginalWidth;
+	constantBufData.scaleDataAndSize.y = (float)height/originalHeight;
+
+	//constantBufData.scaleDataAndSize.z = -abs(getRelPos((width/2), base_window::gameWindow->getWidth()));
+	//constantBufData.scaleDataAndSize.w = abs(getRelPos((height / 2), base_window::gameWindow->getHeight()));
+	onceDrawn = 1;
 }
 
 void Sprite::setPosition(int x, int y)
 {
-	if (onceDrawn) {
+
 		if (x == spritePosition.x && y == spritePosition.y) {
 			return;
 		}
-	}
+	
 	
 
 	translationBufferSet = 1;
 
+	float t1 = getRelPos(x, base_window::gameWindow->getWidth())
+		- getRelPos(spritePosition.x, base_window::gameWindow->getWidth());
+	float t2 = -getRelPos(y, base_window::gameWindow->getHeight())
+		+ getRelPos(spritePosition.y, base_window::gameWindow->getHeight());
+
 	constantBufData.translationData = {
-		getRelPos(x,base_window::gameWindow->getWidth())
-		-getRelPos(spritePosition.x, base_window::gameWindow->getWidth()),
-		-getRelPos(y,base_window::gameWindow->getHeight())
-		+getRelPos(spritePosition.y, base_window::gameWindow->getHeight()),
-			0,0 };
+		constantBufData.translationData.x + t1,
+		constantBufData.translationData.y + t2,0,0 };
 
 	spritePosition.x = x;
 	spritePosition.y = y;
 
 	onceDrawn = 1;
+	
 }
+// -----------------  ||
+// **             **  ||
+// **   MAPPING   **  ||
+// **             ** \||/
+// -----------------  \/
 
 void Sprite::updateResources() {
 
@@ -350,8 +337,7 @@ void Sprite::updateResources() {
 		memcpy(mappedResource.pData,
 			&constantBufData,
 			sizeof(constantBufStruct));
-
-
+		
 		gw_context->Unmap(constantBuff.Get(), 0);
 
 		translationBufferSet = 0;
@@ -364,28 +350,11 @@ void Sprite::rotate(int angle)
 	
 }
 
-
-void Sprite::clearBuffersData()
-{
-	if (translationBufferSet) {
-		
-		constantBufData.translationData = { 0,0,0,0 };
-		constantBufData.rotationData = { 0,0,0,0 };
-		constantBufData.scaleDataAndSize.x = 0;
-		constantBufData.scaleDataAndSize.y = 0;
-
-		updateResources();
-
-		translationBufferSet = 0;
-	}
-}
-
 void Sprite::drawSprites()
 {
 	for (auto& s : drawableList) {
 		if (s != nullptr) {
 			s->draw();
-			//s->clearBuffersData();
 		}
 	}
 }
@@ -460,6 +429,7 @@ void Sprite::draw()
 		setPosition(spritePosition.x, spritePosition.y);
 	}
 
+	onceDrawn = 1;
 
 	UINT step = sizeof(corner);
 	UINT offset = 0;

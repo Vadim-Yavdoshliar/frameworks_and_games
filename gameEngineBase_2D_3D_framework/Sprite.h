@@ -66,20 +66,22 @@ COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
 
 void clearBuffersData();
 
+int orginalWidth , originalHeight;
 int width, height;
 struct vecXY {
-	float x = 0;
-	float y = 0;
+	float x = base_window::gameWindow->getWidth()/2;
+	float y = base_window::gameWindow->getHeight()/2;
 };
 struct corner {
 	
 	vecXY pos;
 	vecXY UV;
 }; 
+
 struct constantBufStruct {
 	XMFLOAT4 translationData = {0,0,0,0};
 	XMFLOAT4 rotationData = {0,0,0,0};
-	XMFLOAT4 scaleDataAndSize = {0,0,0,0};	
+	XMFLOAT4 scaleDataAndSize = {1,1,0,0};	
 };
 
 constantBufStruct constantBufData;
@@ -101,8 +103,8 @@ public:
 	int getWidth() { return width; }
 	int getHeight() { return height; }
 
-	int getX() { return spritePosition.x; }
-	int getY() { return spritePosition.y; }
+	int getX() { return spritePosition.x-width/2; }
+	int getY() { return spritePosition.y-height/2; }
 
 	static void initShaders();
 	static void initLayout();

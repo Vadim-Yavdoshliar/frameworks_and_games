@@ -72,57 +72,103 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 
 #include "gApp.h"
 #include <string>
-
+#include <cmath>
 class MyGame : public gAPP {
 
 	//Sprite* s = nullptr;
 	Sprite* s1 = nullptr;
 	//Sprite* s2;
 	//Sprite* s3;
+	int v1, v2;
+	float a = 25;
+	float acc = 0.0f;
+	int x = 400, y = 350;
+	
+	bool 
+		
+		f = 0, 
+		b = 0, 
+		l = 0, 
+		r = 0, 
+		scaleUp = 0, 
+		scaleDown = 0;
+	
 
-	float a = 200, b = 200;
+
 	void initFrameworkResources() override{
 	
 	}
 	void init() override {
-		//s = createSprite("Sprites\\spaceShip.png");
-		s1 = createSprite("Sprites\\chest_with_tongue_pixels.png");
-		//s2 = createSprite("Sprites\\Screenshot_2.png");
+
+		s1 = createSprite("Sprites\\photo_2024-08-20_15-43-51.jpg");
 		
-		//s3 = getSpriteCopy(s1);
-
-		// int v1, v2;
-		 //getSpriteSize(s2, v1, v2);
-		 //setSpriteSize(s2, v1 / 4, v2 / 4);
-		 //getSpriteSize(s1, v1, v2);
-		 //setSpriteSize(s1, v1 / 2, v2/2);
-		// setSpriteSize(s, v1 / 2, v2 / 2);
-		// setSpritePosition(s1, 400, 100);
-
-		 setSpritePosition(s1,200, 200);
-		// setSpritePosition(s1, 400, 100);
-
-		// makeSpriteVisible(s3, true);
-		// makeSpriteVisible(s2,true);
-		// makeSpriteVisible(s1,true);
+		 //setSpritePosition(s1,x, y);
+		 getSpriteSize(s1, v1, v2);
+	
 		 makeSpriteVisible(s1,true);
 	}
 	void tick() override {
-		
-		//setSpritePosition(s1, a, b);
-		a += 0.1f;
-		b += 0.1f;
+
+		//setSpritePosition(s1, width / 2 - v1/2, height / 2 - v2/2+a*sin(acc));
+		//setSpriteSize(s1, v1 / 2.0f + a * sin(acc), v2 / 2.0f+ a * sin(acc));
+		//acc+=0.2f;
+		int k = 20;
+		if (f) y -= k;
+		if (b) y += k;
+		if (l) x -= k;
+		if (r) x += k;
+		setSpritePosition(s1, x, y);
+
+		if (scaleUp) { v1 += 20; v2 += 20; scaleUp = 0; }
+		if (scaleDown) { v1 -= 20; v2 -= 20; scaleDown = 0; }
+		setSpriteSize(s1,v1, v2);
 	}
 	void gKeyPressed(gKey k) override { 
-
+		switch (k) {
+		case ForwardKey:
+			f = 1;
+			break;
+		case BackwardKey:
+			b = 1;
+			break;
+		case LeftKey:
+			l = 1;
+			break;
+		case RightKey:
+			r = 1;
+			break;
+		}
+		//setSpritePosition(s1, 100, 100);
 	}
-	void mouseKeyPressed(mouseKey) override {
-	
+	void mouseKeyPressed(mouseKey k) override {
+		switch (k){
+	case WheelUp:
+		scaleUp = 1;
+		break;
+	case WheelDown:
+		scaleDown = 1;
+		break;
+	}
 	}
 	void gKeyReleased(gKey k) override {
-
+		switch (k) {
+		case ForwardKey:
+			f = 0;
+			break;
+		case BackwardKey:
+			b = 0;
+			break;
+		case LeftKey:
+			l = 0;
+			break;
+		case RightKey:
+			r = 0;
+			break;
+		}
+		//setSpritePosition(s1, 400, 100);
 	}
-	void mouseKeyReleased(mouseKey) override {
+	void mouseKeyReleased(mouseKey k) override {
+		
 	}
 	void mousePosition(int x,int y) override {
 	}

@@ -116,7 +116,6 @@ base_window::base_window
 	Y(posY)
 {
 
-
 	if (WinProc == nullptr) {
 		customWinProc = base_window::defBaseWindowProc;
 	}
@@ -131,10 +130,17 @@ base_window::base_window
 	init();
 	show();
 
-	listOfWindows.push_back(this);
-
 	if (mainWindow != nullptr)
 		graphicsStation = new graphicsControl(this);
+
+	/*RECT rc;
+	GetClientRect(mainWindow, &rc);
+	this->width = rc.right + rc.left;
+	this->height = rc.bottom + rc.top;*/
+
+	listOfWindows.push_back(this);
+
+	
 }
 
 
