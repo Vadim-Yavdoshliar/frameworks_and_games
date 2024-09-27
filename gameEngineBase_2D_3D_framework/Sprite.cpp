@@ -1,14 +1,73 @@
 #include "Sprite.h"
 
+#include "autoDraw.h"
 
-Sprite* createSprite(const char* path) { return new Sprite(path); }
-void getSpriteSize(int& x, int& y) {}
-void drawSprite(Sprite* inst,int x,int y) {
-	inst->draw();
+
+void drawAllStuff() {
+	Sprite::drawSprites();
 }
-void resizeSprite(Sprite*, int width, int heith) {}
+
+Sprite* createSprite(const char* path)
+{	
+	if (base_window::gameWindowInit == 0)
+	{
+		OutputDebugStringA
+		("\n\n\n\n\tSprite creating error : attempt to create sprite before framework initialisation\nReturned : nullptr");
+		return nullptr;
+	}
+	return new Sprite(path); 
+}
+
+Sprite* getSpriteCopy(Sprite* inst) {
+	if (base_window::gameWindowInit == 0)
+	{
+		OutputDebugStringA
+		("\n\n\n\n\tSprite creating error : attempt to create sprite before framework initialisation\nReturned : nullptr");
+		return nullptr;
+	}
+	inst = new Sprite(inst);
+}
+
+void makeSpriteVisible(Sprite* inst, bool OnOff)
+{
+	if (inst != nullptr) {
+		inst->drawable = OnOff;
+	}
+}
+void getSpriteSize(Sprite* inst, int& x, int& y) {
+	if (inst != nullptr) {
+		x = inst->getWidth();
+		y = inst->getHeight();
+	}
+}
+void drawSprite(Sprite* inst,int x,int y) {
+	if (inst != nullptr) {
+		inst->setPosition(x, y);
+		inst->draw();
+	}
+}
+
+void setSpriteSize(Sprite* inst, int width, int height) {
+	if (inst != nullptr)inst->setSize(width, height);
+}
+
+void getSptitePosition(Sprite* inst, int& x, int& y)
+{
+	if (inst != nullptr) {
+		x = inst->getX();
+		y = inst->getY();
+	}
+}
+
 void rotateSprite(Sprite*) {}
-void replaceSprite(Sprite*) {}
+
+void setSpritePosition(Sprite* inst, int x, int y)
+{
+	if (inst != nullptr) {
+		inst->setPosition(x, y);
+	}
+}
+
 
 Sprite::SpriteVertexShader Sprite::SpriteVertexShader::initialUnit;
 
@@ -16,66 +75,81 @@ Sprite::SpritePixelShader Sprite::SpritePixelShader::initialUnit;
 
 bool Sprite::initDone = 0;
 
+std::list<Sprite*> Sprite::drawableList;
+
+
+
 float getRelPos(float spriteValue, float windowValue)
 {
 	return ((2 * spriteValue) / windowValue) - 1;
 }
 
 
-
+Sprite::Sprite(Sprite* inst) {
+	
+	drawableTexture = inst->drawableTexture;
+	spritePosition.x = inst->spritePosition.x;
+	spritePosition.y = inst->spritePosition.y;
+	width = inst->width;
+	height = inst->height;
+	drawableList.push_front(this);
+}
 
 Sprite::Sprite(const char* fileName)
 {
-
+	
 	HRESULT hr;
 
 	SpriteTexture = getPictureTexture(fileName);
 
 	if (SpriteTexture == nullptr) {
-		myBoxMessage("cant load the image", "External file problem")
+		myBoxMessage("cant load the image", "External file issue")
 			myEXC("problem with creating sprite while loading the image")
 	}
 
 	D3D11_TEXTURE2D_DESC spriteTextureDesciption;
 	SpriteTexture.Get()->GetDesc(&spriteTextureDesciption);
 
+	orginalWidth = spriteTextureDesciption.Width;
+	originalHeight = spriteTextureDesciption.Height;
+
 	width = spriteTextureDesciption.Width;
 	height = spriteTextureDesciption.Height;
 
 
-	spriteRectangle[0] = { { -1,1 },{0,0} };
-	spriteRectangle[1] = {
-		{getRelPos
-		(
-			width,
-			base_window::gameWindow->getWidth()
-		),
-		1},
-		{1,0}
-	};
-	spriteRectangle[2] = {
-		{ -1,
-		-getRelPos
-		(
-			height,
-			base_window::gameWindow->getHeight()
-		)},
-		{0,1}
-	};
-	spriteRectangle[3] = {
-		{getRelPos
-		(
-			width,
-			base_window::gameWindow->getWidth()
-		),
-		-getRelPos
-		(
-			height,
-			base_window::gameWindow->getHeight()
-		)},
-		{1,1}
-	};
+	D3D11_SHADER_RESOURCE_VIEW_DESC textureDesc = {};
 
+	textureDesc.Format = spriteTextureDesciption.Format;
+	textureDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+
+	textureDesc.Texture2D.MipLevels = 1;
+	textureDesc.Texture2D.MostDetailedMip = 0;
+
+
+	hr = gw_device->CreateShaderResourceView(
+		SpriteTexture.Get(),
+		&textureDesc,
+		&drawableTexture
+	);
+	
+
+
+	if (FAILED(hr))
+		myEXC("Problem with shader resource view creation")
+
+		int winW = base_window::gameWindow->getWidth();
+		int winH = base_window::gameWindow->getHeight();
+
+		float c1 = getRelPos((winW - width) / 2.0f, winW);
+		float c2 = -getRelPos((winH - height) / 2.0f, winH);
+
+		spriteRectangle[0] = {{c1,c2},{0,0} };
+		spriteRectangle[1] = { {-c1,c2},{1,0} };
+		spriteRectangle[2] = { {c1,-c2},{0,1} };
+		spriteRectangle[3] = { {-c1,-c2},{1,1} };
+
+		spritePosition.x = (winW) / 2;
+		spritePosition.y = (winH) / 2;
 
 	D3D11_BUFFER_DESC buffer_desc = {};
 	buffer_desc.ByteWidth = sizeof(spriteRectangle);
@@ -93,44 +167,43 @@ Sprite::Sprite(const char* fileName)
 		&actualVertexData,
 		&spriteVertexBuffer
 	);
+
+	if (FAILED(hr))
+		myEXC("Vertex BUFFER creation issue")
+
+
+	constantBufData.scaleDataAndSize.z = base_window::gameWindow->getWidth();
+	constantBufData.scaleDataAndSize.w = base_window::gameWindow->getHeight();
+
+	D3D11_BUFFER_DESC const_buffer_desc = {};
+	const_buffer_desc.ByteWidth = sizeof(constantBufStruct);
+	const_buffer_desc.Usage = D3D11_USAGE_DYNAMIC;
+	const_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	const_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	const_buffer_desc.MiscFlags = 0;
+	const_buffer_desc.StructureByteStride = 0;
 	
-	if (!FAILED(hr)) {
+	
 
-		UINT step = sizeof(corner);
-		UINT offset = 0;
-
-		gw_context->IASetVertexBuffers(
-			0,
-			1,
-			spriteVertexBuffer.GetAddressOf(),
-			&step,
-			&offset
-		);
-	}
-	else myEXC("Vertex BUFFER creation issue")
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC textureDesc = {};
-
-	textureDesc.Format = spriteTextureDesciption.Format;
-	textureDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	textureDesc.Texture2D.MostDetailedMip = 0;
-	textureDesc.Texture2D.MipLevels = 1;
-
-	hr = gw_device->CreateShaderResourceView(
-		SpriteTexture.Get(),
-		&textureDesc,
-		&drawableTexture
+	
+	hr = gw_device->CreateBuffer(
+		&const_buffer_desc,
+		nullptr,
+		&constantBuff
 	);
-	
 
-	if (FAILED(hr)) myEXC("Problem with shader resource view creation")
+	if (FAILED(hr))
+		myEXC("Constant BUFFER creation issue")
 
+		translationBufferSet = 1;
+		updateResources();
 
-		gw_context->PSSetShaderResources(
-			0,
-			1,
-			drawableTexture.GetAddressOf());
+		drawableList.push_front(this);
 
+}
+
+Sprite::~Sprite()
+{
 
 }
 
@@ -142,6 +215,9 @@ void initSpriteCreation() {
 	Sprite::initShaders();
 	
 	Sprite::initLayout();
+
+	Sprite::initBlend();
+
 	
 }
 
@@ -191,6 +267,96 @@ void Sprite::SpritePixelShader::initPixelShader() {
 		else myEXC("Pixel shader creation issue")
 	}
 	else myEXC("Pixel shader loading issue")
+}
+
+
+void Sprite::setSize(int widthV, int heightV)
+{
+
+	if (widthV == width && heightV == height) {
+		return;
+	}
+	
+	translationBufferSet = 1;
+
+	width = widthV;
+	height = heightV;
+
+	constantBufData.scaleDataAndSize.x = (float)width/orginalWidth;
+	constantBufData.scaleDataAndSize.y = (float)height/originalHeight;
+
+	//constantBufData.scaleDataAndSize.z = -abs(getRelPos((width/2), base_window::gameWindow->getWidth()));
+	//constantBufData.scaleDataAndSize.w = abs(getRelPos((height / 2), base_window::gameWindow->getHeight()));
+	onceDrawn = 1;
+}
+
+void Sprite::setPosition(int x, int y)
+{
+
+		if (x == spritePosition.x && y == spritePosition.y) {
+			return;
+		}
+	
+	
+
+	translationBufferSet = 1;
+
+	float t1 = getRelPos(x, base_window::gameWindow->getWidth())
+		- getRelPos(spritePosition.x, base_window::gameWindow->getWidth());
+	float t2 = -getRelPos(y, base_window::gameWindow->getHeight())
+		+ getRelPos(spritePosition.y, base_window::gameWindow->getHeight());
+
+	constantBufData.translationData = {
+		constantBufData.translationData.x + t1,
+		constantBufData.translationData.y + t2,0,0 };
+
+	spritePosition.x = x;
+	spritePosition.y = y;
+
+	onceDrawn = 1;
+	
+}
+// -----------------  ||
+// **             **  ||
+// **   MAPPING   **  ||
+// **             ** \||/
+// -----------------  \/
+
+void Sprite::updateResources() {
+
+	if (translationBufferSet) {
+		D3D11_MAPPED_SUBRESOURCE mappedResource = {};
+
+		gw_context->Map(
+			constantBuff.Get(),
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&mappedResource);
+
+		memcpy(mappedResource.pData,
+			&constantBufData,
+			sizeof(constantBufStruct));
+		
+		gw_context->Unmap(constantBuff.Get(), 0);
+
+		translationBufferSet = 0;
+	}
+}
+
+
+void Sprite::rotate(int angle)
+{
+	
+}
+
+void Sprite::drawSprites()
+{
+	for (auto& s : drawableList) {
+		if (s != nullptr) {
+			s->draw();
+		}
+	}
 }
 
 void Sprite::initShaders()
@@ -257,6 +423,65 @@ void Sprite::initLayout()
 
 void Sprite::draw()
 {
+	if (!drawable) return;
+
+	if (!onceDrawn) {
+		setPosition(spritePosition.x, spritePosition.y);
+	}
+
+	onceDrawn = 1;
+
+	UINT step = sizeof(corner);
+	UINT offset = 0;
+
+	gw_context->IASetVertexBuffers(
+		0,
+		1,
+		spriteVertexBuffer.GetAddressOf(),
+		&step,
+		&offset
+	);
+
+	gw_context->PSSetShaderResources(
+		0,
+		1,
+		drawableTexture.GetAddressOf());
+	
+	updateResources();
+
+	gw_context->VSSetConstantBuffers(
+		0,
+		1, 
+		constantBuff.GetAddressOf());
+
+	
+
 	gw_context->Draw(4,0);
 	
+}
+
+void Sprite::initBlend() {
+	ID3D11BlendState* g_pBlendStateNoBlend = NULL;
+
+	D3D11_BLEND_DESC BlendState;
+	ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+	BlendState.RenderTarget[0].BlendEnable = TRUE;
+	BlendState.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA; 
+	BlendState.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	BlendState.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD; 
+
+	BlendState.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE; 
+	BlendState.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO; 
+	BlendState.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD; 
+
+	BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL; 
+
+	HRESULT hr = gw_device->CreateBlendState(&BlendState, &g_pBlendStateNoBlend);
+	if (FAILED(hr)) {
+		myEXC("Problem with blend creation")
+	}
+	float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	UINT sampleMask = 0xffffffff;
+
+	gw_context->OMSetBlendState(g_pBlendStateNoBlend, blendFactor, sampleMask);
 }

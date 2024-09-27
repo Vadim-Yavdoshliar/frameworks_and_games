@@ -72,44 +72,114 @@ int WINAPI WinMain(HINSTANCE handler, HINSTANCE someTrashMaybe, LPSTR cmdParams,
 
 #include "gApp.h"
 #include <string>
-
+#include <cmath>
 class MyGame : public gAPP {
-	int counter = 0;
-	void initFrameworkResources() override{}
-	void init() override {
-		openTextStream();
-	}
-	void tick() override {}
 
-	void gKeyPressed(gKey k) override { 
+	//Sprite* s = nullptr;
+	Sprite* s1 = nullptr;
+	//Sprite* s2;
+	//Sprite* s3;
+	int v1, v2;
+	float a = 25;
+	float acc = 0.0f;
+	int x = 400, y = 350;
+	
+	bool 
 		
+		f = 0, 
+		b = 0, 
+		l = 0, 
+		r = 0, 
+		scaleUp = 0, 
+		scaleDown = 0;
+	
 
-	/*	char t = k;
-		OutputDebugStringA("Pressed : ");
-		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n");*/
 
+	void initFrameworkResources() override{
+	
 	}
+	void init() override {
 
-	void mouseKeyPressed(mouseKey) override {}
-	void gKeyReleased(gKey k) override {
-
-	/*	OutputDebugStringA("Released : ");
-		OutputDebugStringA(std::to_string((int)k).c_str());
-		OutputDebugStringA("\n\n");*/
-
+		s1 = createSprite("Sprites\\photo_2024-08-20_15-43-51.jpg");
+		
+		 //setSpritePosition(s1,x, y);
+		 getSpriteSize(s1, v1, v2);
+	
+		 makeSpriteVisible(s1,true);
 	}
-	void mouseKeyReleased(mouseKey) override {}
-	void mousePosition(int x,int y) override {}
-	void charInput(char symbol) {
-#ifdef _STREAMING_TEST_
-		OutputDebugStringA((std::string() + symbol).c_str());
-		++counter;
-		if (counter == 10) {
-			OutputDebugStringA("\n\n");
-			OutputDebugStringA(closeTextStream().c_str());
+	void tick() override {
+
+		//setSpritePosition(s1, width / 2 - v1/2, height / 2 - v2/2+a*sin(acc));
+		//setSpriteSize(s1, v1 / 2.0f + a * sin(acc), v2 / 2.0f+ a * sin(acc));
+		//acc+=0.2f;
+		int k = 20;
+		if (f) y -= k;
+		if (b) y += k;
+		if (l) x -= k;
+		if (r) x += k;
+		setSpritePosition(s1, x, y);
+
+		if (scaleUp) { v1 += 20; v2 += 20; scaleUp = 0; }
+		if (scaleDown) { v1 -= 20; v2 -= 20; scaleDown = 0; }
+		setSpriteSize(s1,v1, v2);
+	}
+	void gKeyPressed(gKey k) override { 
+		switch (k) {
+		case ForwardKey:
+			f = 1;
+			break;
+		case BackwardKey:
+			b = 1;
+			break;
+		case LeftKey:
+			l = 1;
+			break;
+		case RightKey:
+			r = 1;
+			break;
 		}
-#endif
+		//setSpritePosition(s1, 100, 100);
+	}
+	void mouseKeyPressed(mouseKey k) override {
+		switch (k){
+	case WheelUp:
+		scaleUp = 1;
+		break;
+	case WheelDown:
+		scaleDown = 1;
+		break;
+	}
+	}
+	void gKeyReleased(gKey k) override {
+		switch (k) {
+		case ForwardKey:
+			f = 0;
+			break;
+		case BackwardKey:
+			b = 0;
+			break;
+		case LeftKey:
+			l = 0;
+			break;
+		case RightKey:
+			r = 0;
+			break;
+		}
+		//setSpritePosition(s1, 400, 100);
+	}
+	void mouseKeyReleased(mouseKey k) override {
+		
+	}
+	void mousePosition(int x,int y) override {
+	}
+	void charInput(char symbol) {
+
+	}
+	~MyGame() {
+		delete s1;
+		//delete s1;
+		//delete s2;
+		//delete s3;
 	}
 };
 

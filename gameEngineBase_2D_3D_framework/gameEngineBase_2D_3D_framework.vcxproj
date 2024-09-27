@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="autoDraw.h" />
     <ClInclude Include="gApp.h" />
     <ClInclude Include="GDIPlusController.h" />
     <ClInclude Include="graphicsControl.h" />
@@ -54,6 +55,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Sprites\bigSprite.jpg" />
+    <Image Include="Sprites\chest_with_tongue_pixels.png" />
+    <Image Include="Sprites\photo_2024-08-20_15-43-51.jpg" />
+    <Image Include="Sprites\Screenshot_2.png" />
+    <Image Include="Sprites\spaceShip.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -147,8 +155,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <FxCompile>
-      <ShaderType>Vertex</ShaderType>
+      <ShaderType>Pixel</ShaderType>
       <ObjectFileOutput>$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>4.1</ShaderModel>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,8 +176,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <FxCompile>
-      <ShaderType>Vertex</ShaderType>
+      <ShaderType>Pixel</ShaderType>
       <ObjectFileOutput>$(ProjectDir)%(Filename).cso</ObjectFileOutput>
+      <ShaderModel>4.1</ShaderModel>
     </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

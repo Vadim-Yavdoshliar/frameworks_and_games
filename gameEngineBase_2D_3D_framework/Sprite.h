@@ -9,18 +9,14 @@ COM::ComPtr<ID3D11Texture2D> getPictureTexture(const char* filePath);
 
 float getRelPos(float spriteValue,float windowValue);
 
-
 class Sprite
 {
+	static std::list<Sprite*>drawableList;
+public:
+	bool drawable = 0;
+private:
 
-	static bool initDone;
-
-	COM::ComPtr<ID3D11Texture2D> SpriteTexture;
-
-	COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
-
-	COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
-
+	// SHADERS
 class SpriteVertexShader {
 
 	SpriteVertexShader() = default;
@@ -55,35 +51,75 @@ public:
 	static COM::ComPtr<ID3D11VertexShader> getSpritePixelShader();
 };
 
+	// Shows that general graphics resources are set for sprites drawing
+static bool initDone;
 
+	// MAIN SPRITE DATA
 
+COM::ComPtr<ID3D11Buffer> constantBuff;
+
+COM::ComPtr<ID3D11Texture2D> SpriteTexture;
+
+COM::ComPtr<ID3D11ShaderResourceView> drawableTexture;
+
+COM::ComPtr<ID3D11Buffer> spriteVertexBuffer;
+
+void clearBuffersData();
+
+int orginalWidth , originalHeight;
 int width, height;
 struct vecXY {
-	float x;
-	float y;
+	float x = base_window::gameWindow->getWidth()/2;
+	float y = base_window::gameWindow->getHeight()/2;
 };
 struct corner {
 	
 	vecXY pos;
 	vecXY UV;
+}; 
+
+struct constantBufStruct {
+	XMFLOAT4 translationData = {0,0,0,0};
+	XMFLOAT4 rotationData = {0,0,0,0};
+	XMFLOAT4 scaleDataAndSize = {1,1,0,0};	
 };
+
+constantBufStruct constantBufData;
+
+void updateResources();
+
+bool translationBufferSet = 0;
+
+bool onceDrawn = 0;
 
 corner spriteRectangle[4];
 
-
+vecXY spritePosition;
 
 public:
 
+	static void drawSprites();
+
+	int getWidth() { return width; }
+	int getHeight() { return height; }
+
+	int getX() { return spritePosition.x-width/2; }
+	int getY() { return spritePosition.y-height/2; }
+
 	static void initShaders();
 	static void initLayout();
+	static void initBlend();
 
-	virtual void draw();
-	
 	void setSize(int widthV, int heightV);
-	void setPosition(int xv, int yv);
+	void setPosition(int x, int y);
 	void rotate(int angle);
 
+
+	virtual void draw();
+
+	
 	Sprite(const char*);
+	Sprite(Sprite*);
 
 	~Sprite();
 

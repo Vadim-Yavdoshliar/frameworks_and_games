@@ -1,15 +1,15 @@
 
 #include "gApp.h"
 #include "windowSystem.h"
-
+#include "autoDraw.h"
 
 void gAPP::openTextStream()
 {
 	base_window::gameWindow->mainKeyboard.openStream();
+
 }
 std::string gAPP::closeTextStream()
 {
-	
 	return base_window::gameWindow->mainKeyboard.closeStream();
 }
 
@@ -17,10 +17,8 @@ std::string gAPP::closeTextStream()
 
 int gAPP::run(gAPP* mainAPP) {
 
-	
 
 #ifdef _DEBUG_INFO_
-
 	try {
 
 	mainAPP->initFrameworkResources();
@@ -29,36 +27,30 @@ int gAPP::run(gAPP* mainAPP) {
 
 	base_window::gameWindow = &gWindow;
 
-	initSpriteCreation();
+	base_window::gameWindowInit = 1;
 
-	Sprite* s = createSprite("Screenshot_2.png");
+	initSpriteCreation();
 
 	mainAPP->init();
 
-	//initPicture();
-
-	clock_t start = clock();
-
-	
 	while (base_window::getCountOfWindows() != 0) {
 		
 		gw_object->graphicsStation->startFrame();
 
 		mainAPP->tick();
-
-		//drawTextureTest();
 		
-		drawSprite(s, 0, 0);
 		processMouse(mainAPP);
 		processKeyborad(mainAPP);
 		
+		drawAllStuff();
 		
 		gWindow.processWindowTick();
 
 		gw_object->graphicsStation->showFrame();
+
 	}
 
-	delete s;
+
 	delete mainAPP;
 
 	return 0;

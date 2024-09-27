@@ -13,11 +13,15 @@
 class Sprite;
 
 Sprite* createSprite(const char*);
+Sprite* getSpriteCopy(Sprite*);
+
+void makeSpriteVisible(Sprite*, bool OnOff);
 void getSpriteSize(Sprite*,int& width, int& height);
 void setSpriteSize(Sprite*,int width,int height);
 void getSptitePosition(Sprite*,int& x,int& y);
-void drawSprite(Sprite*,int x,int y);
 void rotateSprite(Sprite*);
+void setSpritePosition(Sprite*, int x, int y);
+
 
 class gAPP {
 

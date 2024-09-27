@@ -5,18 +5,18 @@ using namespace Gdiplus;
 
 class GDIPlusController {
 public:
-   
+
+    GDIPlusController();
+
+    ~GDIPlusController();
 
     static GDIPlusController& getInstance() {
         static GDIPlusController instance;
         return instance;
     }
-    ~GDIPlusController();
-private:
-    
-    GDIPlusController();
 
-   
+private:
+
     ULONG_PTR gdiplusToken;
 };
 

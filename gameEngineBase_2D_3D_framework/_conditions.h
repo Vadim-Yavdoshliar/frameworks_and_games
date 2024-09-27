@@ -7,10 +7,15 @@
 //#define _TEST_
 #define _gAPP_test_
 
+
 #define myEXC(errorText) throw std::exception(("\n\n\n\n" + std::string(errorText)+"\n\n\n\n").c_str());
 #define myBoxMessage(message,errorType) MessageBoxA(gw_object->getWND(),message,errorType,MB_OK);
 
+
+#include <DirectXMath.h>
+using namespace DirectX;
 #include <Windows.h>
+#include <list>
 #include <queue>
 #include <vector>
 #include <ctime>
@@ -23,12 +28,11 @@
 #include <objidl.h>
 #include <gdiplus.h>
 #pragma comment (lib, "Gdiplus.lib")
+
 #include <d3dcompiler.h>
 #pragma comment (lib, "d3dcompiler.lib")
 
 class base_window;
-
-//#include <WICTextureLoader.h>
 
 namespace COM = Microsoft::WRL;
 

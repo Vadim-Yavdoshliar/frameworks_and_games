@@ -9,17 +9,21 @@ COM::ComPtr<ID3D11DeviceContext> graphicsControl::getControl()
 {
 	return ppContext;
 }
+
 COM::ComPtr<ID3D11InputLayout>& graphicsControl::getVertexInputLayout()
 {
 	return vertexInputLayout;
 }
+
 COM::ComPtr<IDXGISwapChain> graphicsControl::getppSwapChain()
 {
 	return ppSwapChain;
 }
 COM::ComPtr<ID3D11RenderTargetView> graphicsControl::getTargetView()
 {
+
 	return backBuffer;
+
 }
 graphicsControl::graphicsControl(base_window* winInst)
 {
@@ -33,7 +37,7 @@ graphicsControl::graphicsControl(base_window* winInst)
 		
 		textureDesc.BufferDesc.Width = 0;
 		textureDesc.BufferDesc.Height = 0;
-		textureDesc.BufferDesc.RefreshRate.Numerator = 60;
+		textureDesc.BufferDesc.RefreshRate.Numerator = 120;
 		textureDesc.BufferDesc.RefreshRate.Denominator = 1;
 		textureDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		textureDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
@@ -123,7 +127,7 @@ graphicsControl::graphicsControl(base_window* winInst)
 void graphicsControl::startFrame()
 {
 
-	float color[4] = { 1.0f, 0.0f, 1.0, 0.0f };
+	float color[4] = { 0.0f, 0.0f, 0.0, 0.0f };
     ppContext->ClearRenderTargetView(backBuffer.Get(), color);
 
 }
